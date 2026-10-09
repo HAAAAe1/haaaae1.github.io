@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Hi, camera</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fff;--bg2:#f7f8fa;--bg3:#f0f2f5;
+  --text:#1a1a1a;--text2:#666;--text3:#999;
+  --accent:#4d6bfe;--accent-light:#eef2ff;
+  --border:#e5e7eb;--radius:12px;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--text);line-height:1.6;font-size:14px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--bg);border-right:1px solid var(--border);padding:24px 0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.sidebar-logo{padding:0 24px 32px;font-size:20px;font-weight:700}.sidebar-logo span{color:var(--accent)}
+.sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 24px;color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;border-left:3px solid transparent}
+.sidebar nav a:hover,.sidebar nav a.active{color:var(--accent);background:var(--accent-light);text-decoration:none}
+.sidebar nav a.active{border-left-color:var(--accent)}
+.main{margin-left:220px;flex:1;padding:24px 32px;max-width:800px;width:100%}
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:18px;align-items:center;justify-content:center}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:90}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;padding:60px 16px 24px}.menu-btn{display:flex}.overlay.show{display:block}}
+.page{display:none}.page.active{display:block}
+
+/* AUTH BAR */
+.auth-bar{background:var(--bg);border-radius:var(--radius);padding:12px 20px;margin-bottom:20px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.auth-bar input{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;outline:none}
+.auth-bar input:focus{border-color:var(--accent)}
+.auth-btn{padding:8px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .2s}
+.auth-btn.primary{background:var(--accent);color:#fff}
+.auth-btn.primary:hover{opacity:.85}
+.auth-btn.ghost{background:var(--bg2);color:var(--text2)}
+.auth-btn.ghost:hover{background:var(--bg3)}
+.auth-status{font-size:12px;color:var(--text3)}
+.auth-status.ok{color:#22c55e}
+
+/* COMPOSER */
+.composer{background:var(--bg);border-radius:var(--radius);padding:20px;margin-bottom:24px;border:1px solid var(--border);display:none}
+.composer.show{display:block}
+.composer textarea{width:100%;border:none;resize:none;font-family:var(--font);font-size:14px;line-height:1.6;outline:none;min-height:60px;color:var(--text)}
+.composer textarea::placeholder{color:var(--text3)}
+.composer-actions{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.composer-btns{display:flex;gap:8px}
+.composer-btns label{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer;background:var(--bg2);color:var(--text2);transition:all .2s}
+.composer-btns label:hover{background:var(--bg3);color:var(--text)}
+.composer-btns input[type=file]{display:none}
+.publish-btn{padding:8px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .2s}
+.publish-btn:hover{opacity:.85}
+.publish-btn:disabled{opacity:.4;cursor:not-allowed}
+.preview-area{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.preview-img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.preview-file{display:flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg2);border-radius:6px;font-size:12px;color:var(--text2)}
+.preview-remove{cursor:pointer;color:var(--text3);font-size:14px;margin-left:4px}
+.preview-remove:hover{color:#e74c3c}
+
+/* FEED */
+.feed-item{background:var(--bg);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border)}
+.feed-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--accent);flex-shrink:0}
+.feed-name{font-weight:600;font-size:14px}
+.feed-time{font-size:12px;color:var(--text3)}
+.feed-text{font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.feed-images{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.feed-images img{max-width:200px;max-height:200px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+.feed-files{margin-top:12px;display:flex;flex-direction:column;gap:4px}
+.feed-file{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--accent);text-decoration:none;max-width:fit-content}
+.feed-actions{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.feed-action{font-size:12px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:var(--font);transition:color .2s}
+.feed-action:hover{color:var(--accent)}
+.feed-action.danger:hover{color:#e74c3c}
+.feed-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
+.feed-loading{text-align:center;padding:40px;color:var(--text3)}
+
+/* EDIT MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius);padding:24px;max-width:600px;width:90%}
+.modal h3{margin-bottom:16px;font-size:16px}
+.modal textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--font);font-size:14px;outline:none;resize:vertical;min-height:120px}
+.modal textarea:focus{border-color:var(--accent)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+/* PROJECTS */
+.project-card{background:var(--bg);border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-bottom:16px;transition:box-shadow .2s}
+.project-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.project-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.project-desc{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
+.project-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.project-tag{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500;background:var(--bg2);color:var(--text2)}
+.project-link-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);font-weight:500}
+
+/* BOOKMARKS */
+.bm-section{margin-bottom:28px}
+.bm-title{font-size:15px;font-weight:600;margin-bottom:12px}
+.bm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.bm-grid{grid-template-columns:1fr}}
+.bm-item{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);transition:all .2s;font-size:13px;font-weight:500;color:var(--text)}
+.bm-item:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 2px 8px rgba(77,107,254,.1);text-decoration:none}
+.bm-icon{width:32px;height:32px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+
+/* ABOUT */
+.about-card{background:var(--bg);border-radius:var(--radius);padding:32px;border:1px solid var(--border);text-align:center}
+.about-avatar{width:80px;height:80px;border-radius:50%;background:var(--accent-light);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--accent)}
+.about-name{font-size:22px;font-weight:700;margin-bottom:4px}
+.about-role{font-size:14px;color:var(--text2);margin-bottom:16px}
+.about-links{display:flex;justify-content:center;gap:16px;margin-top:20px}
+.about-link{padding:8px 20px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:500;transition:all .2s;color:var(--text)}
+.about-link:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+
+.img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;cursor:pointer}
+.img-modal.show{display:flex}
+.img-modal img{max-width:90%;max-height:90%;border-radius:8px}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-size:11px;margin-right:4px}
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">Hi, <span>camera</span></div>
+  <nav>
+    <a href="#" class="active" data-page="home" onclick="switchPage('home',this)">📋 首页</a>
+    <a href="#" data-page="projects" onclick="switchPage('projects',this)">📁 项目</a>
+    <a href="#" data-page="bookmarks" onclick="switchPage('bookmarks',this)">🔗 收藏</a>
+    <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <!-- AUTH -->
+  <div class="auth-bar" id="authBar">
+    <span id="authStatus" class="auth-status">未登录</span>
+    <input type="password" id="tokenInput" placeholder="GitHub Personal Access Token (留空只读)">
+    <button class="auth-btn primary" onclick="doLogin()">登录</button>
+    <button class="auth-btn ghost" id="logoutBtn" style="display:none" onclick="doLogout()">退出</button>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="composer" id="composer">
+      <textarea id="postText" placeholder="说点什么..."></textarea>
+      <div class="preview-area" id="previewArea"></div>
+      <div class="composer-actions">
+        <div class="composer-btns">
+          <label>📷 图片<input type="file" id="imgInput" accept="image/*" multiple onchange="handleImages(this)"></label>
+          <label>📎 附件<input type="file" id="fileInput" multiple onchange="handleFiles(this)"></label>
+        </div>
+        <button class="publish-btn" id="publishBtn" onclick="publish()">发布</button>
+      </div>
+    </div>
+    <div id="feed"><div class="feed-loading">加载中...</div></div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="page" id="page-projects">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">项目</h2>
+    <div class="project-card">
+      <div class="project-name">happy</div>
+      <div class="project-desc">工作区同步仓库。双机环境下的配置、记忆、脚本同步。</div>
+      <div class="project-tags"><span class="project-tag">Git</span><span class="project-tag">PowerShell</span></div>
+      <a class="project-link-btn" href="https://github.com/HAAAAe1/happy" target="_blank">GitHub →</a>
+    </div>
+    <div class="project-card">
+      <div class="project-name">rollmaodie</div>
+      <div class="project-desc">耄耋图鉴 QQ 机器人插件。140 条数据，随机抽取。</div>
+      <div class="project-tags"><span class="project-tag">JavaScript</span><span class="project-tag">QQ Bot</span></div>
+      <a class="project-link-btn" href="https://github.com/HAAAAe1/trss-plugin-rollmaodie" target="_blank">GitHub →</a>
+    </div>
+    <div class="project-card">
+      <div class="project-name">slot-machine</div>
+      <div class="project-desc">耄耋机大冒险 Roguelike。10 Boss、18 事件、16 诅咒。</div>
+      <div class="project-tags"><span class="project-tag">JavaScript</span><span class="project-tag">Roguelike</span></div>
+      <a class="project-link-btn" href="https://github.com/HAAAAe1" target="_blank">GitHub →</a>
+    </div>
+  </div>
+
+  <!-- BOOKMARKS -->
+  <div class="page" id="page-bookmarks">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">收藏</h2>
+    <div class="bm-section">
+      <div class="bm-title">开发工具</div>
+      <div class="bm-grid">
+        <a class="bm-item" href="https://github.com" target="_blank"><div class="bm-icon">🐙</div>GitHub</a>
+        <a class="bm-item" href="https://code.visualstudio.com" target="_blank"><div class="bm-icon">💻</div>VS Code</a>
+        <a class="bm-item" href="https://nodejs.org" target="_blank"><div class="bm-icon">🟢</div>Node.js</a>
+        <a class="bm-item" href="https://learn.microsoft.com/powershell" target="_blank"><div class="bm-icon">🔷</div>PowerShell</a>
+        <a class="bm-item" href="https://developer.mozilla.org" target="_blank"><div class="bm-icon">📖</div>MDN</a>
+        <a class="bm-item" href="https://stackoverflow.com" target="_blank"><div class="bm-icon">📚</div>Stack Overflow</a>
+      </div>
+    </div>
+    <div class="bm-section">
+      <div class="bm-title">日常工具</div>
+      <div class="bm-grid">
+        <a class="bm-item" href="https://www.google.com" target="_blank"><div class="bm-icon">🔍</div>Google</a>
+        <a class="bm-item" href="https://chat.openai.com" target="_blank"><div class="bm-icon">🤖</div>ChatGPT</a>
+        <a class="bm-item" href="https://chat.deepseek.com" target="_blank"><div class="bm-icon">🐋</div>DeepSeek</a>
+        <a class="bm-item" href="https://miot-mimo.com" target="_blank"><div class="bm-icon">🧠</div>MiMo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="page" id="page-about">
+    <div class="about-card">
+      <div class="about-avatar">H</div>
+      <div class="about-name">H</div>
+      <div class="about-role">HAAAAAe</div>
+      <p style="color:var(--text2);font-size:14px;max-width:400px;margin:0 auto;line-height:1.7">
+        啦啦啦啦啦，试试ai好使不
+      </p>
+      <div class="about-links">
+        <a class="about-link" href="https://github.com/HAAAAe1" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <h3>编辑动态</h3>
+    <textarea id="editText"></textarea>
+    <div class="modal-actions">
+      <button class="auth-btn ghost" onclick="closeEdit()">取消</button>
+      <button class="auth-btn primary" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal" id="imgModal" onclick="this.classList.remove('show')">
+  <img id="imgModalImg" src="">
+</div>
+
+<script>
+const REPO='HAAAAe1/haaaae1.github.io';
+const API='https://api.github.com';
+const LABEL='blog-feed';
+let token=localStorage.getItem('gh_token')||'';
+let pendingImages=[],pendingFiles=[];
+let editingIssueNum=null;
+
+// ── AUTH ──
+function updateAuthUI(){
+  const s=document.getElementById('authStatus');
+  const lo=document.getElementById('logoutBtn');
+  const comp=document.getElementById('composer');
+  if(token){
+    s.textContent='✓ 已登录';s.className='auth-status ok';
+    lo.style.display='inline-block';
+    comp.classList.add('show');
+    document.getElementById('tokenInput').style.display='none';
+    document.querySelector('.auth-bar .auth-btn.primary').style.display='none';
+  }else{
+    s.textContent='未登录';s.className='auth-status';
+    lo.style.display='none';
+    comp.classList.remove('show');
+    document.getElementById('tokenInput').style.display='';
+    document.querySelector('.auth-bar .auth-btn.primary').style.display='';
+  }
+}
+function doLogin(){
+  const t=document.getElementById('tokenInput').value.trim();
+  if(!t)return;
+  token=t;localStorage.setItem('gh_token',t);
+  updateAuthUI();loadFeed();
+}
+function doLogout(){
+  token='';localStorage.removeItem('gh_token');
+  updateAuthUI();
+}
+
+// ── API ──
+async function api(path,opts={}){
+  const h={'Accept':'application/vnd.github+json','User-Agent':'blog'};
+  if(token)h['Authorization']=`Bearer ${token}`;
+  const res=await fetch(API+path,{...opts,headers:{...h,...opts.headers}});
+  if(!res.ok)throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+
+// ── LOAD FEED ──
+async function loadFeed(){
+  const el=document.getElementById('feed');
+  try{
+    const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=all&sort=created&direction=desc&per_page=50`);
+    if(!issues.length){
+      el.innerHTML='<div class="feed-empty">还没有动态</div>';return;
+    }
+    el.innerHTML=issues.map(iss=>{
+      const body=iss.body||'';
+      // Parse: first line = text, then ---IMAGES--- and ---FILES--- sections
+      const parts=body.split('---IMAGES---');
+      const textPart=parts[0].trim();
+      let images=[],files=[];
+      if(parts[1]){
+        const imgParts=parts[1].split('---FILES---');
+        images=imgParts[0].trim().split('\n').filter(l=>l.startsWith('![')).map(l=>{
+          const m=l.match(/!\[.*?\]\((.*?)\)/);return m?m[1]:null;
+        }).filter(Boolean);
+        if(imgParts[1]){
+          files=imgParts[1].trim().split('\n').filter(l=>l.startsWith('- [')).map(l=>{
+            const m=l.match(/- \[(.*?)\]\((.*?)\)/);return m?{name:m[1],url:m[2]}:null;
+          }).filter(Boolean);
+        }
+      }
+      const d=new Date(iss.created_at);
+      const ts=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const imgsHtml=images.map(s=>`<img src="${s}" onclick="showImg('${s}')">`).join('');
+      const filesHtml=files.map(f=>`<a class="feed-file" href="${f.url}" target="_blank">📄 ${f.name}</a>`).join('');
+      const isOwner=token&&iss.user.login==='HAAAAe1';
+      const actions=isOwner?`
+        <div class="feed-actions">
+          <button class="feed-action" onclick="openEdit(${iss.number},this)">编辑</button>
+          <button class="feed-action danger" onclick="deletePost(${iss.number})">删除</button>
+        </div>`:'';
+      return `<div class="feed-item" data-num="${iss.number}">
+        <div class="feed-header"><div class="avatar">${iss.user.login[0].toUpperCase()}</div><div><div class="feed-name">${esc(iss.user.login)}</div><div class="feed-time">${ts}</div></div></div>
+        ${textPart?`<div class="feed-text">${esc(textPart)}</div>`:''}
+        ${imgsHtml?`<div class="feed-images">${imgsHtml}</div>`:''}
+        ${filesHtml?`<div class="feed-files">${filesHtml}</div>`:''}
+        ${actions}
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML=`<div class="feed-empty">加载失败: ${e.message}</div>`;
+  }
+}
+
+// ── PUBLISH ──
+function handleImages(input){
+  Array.from(input.files).forEach(f=>{
+    if(f.size>2*1024*1024){alert(f.name+' 超过 2MB');return}
+    const r=new FileReader();r.onload=e=>{pendingImages.push(e.target.result);renderPreview()};r.readAsDataURL(f);
+  });input.value='';
+}
+function handleFiles(input){
+  Array.from(input.files).forEach(f=>{
+    if(f.size>5*1024*1024){alert(f.name+' 超过 5MB');return}
+    const r=new FileReader();r.onload=e=>{pendingFiles.push({name:f.name,data:e.target.result});renderPreview()};r.readAsDataURL(f);
+  });input.value='';
+}
+function renderPreview(){
+  const a=document.getElementById('previewArea');a.innerHTML='';
+  pendingImages.forEach((s,i)=>{
+    a.innerHTML+=`<div style="position:relative;display:inline-block"><img src="${s}" class="preview-img"><span class="preview-remove" onclick="pendingImages.splice(${i},1);renderPreview()">✕</span></div>`;
+  });
+  pendingFiles.forEach((f,i)=>{
+    a.innerHTML+=`<div class="preview-file">📄 ${f.name} <span class="preview-remove" onclick="pendingFiles.splice(${i},1);renderPreview()">✕</span></div>`;
+  });
+}
+
+async function publish(){
+  const text=document.getElementById('postText').value.trim();
+  if(!text&&!pendingImages.length&&!pendingFiles.length)return;
+  if(!token){alert('请先登录');return}
+
+  let body=text;
+  if(pendingImages.length||pendingFiles.length){
+    body+='\n\n---IMAGES---\n';
+    body+=pendingImages.map(s=>`![img](${s})`).join('\n');
+    body+='\n\n---FILES---\n';
+    body+=pendingFiles.map(f=>`- [${f.name}](${f.data})`).join('\n');
+  }
+
+  const btn=document.getElementById('publishBtn');
+  btn.disabled=true;btn.textContent='发布中...';
+  try{
+    await api(`/repos/${REPO}/issues`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title:`[blog] ${text.slice(0,50)||'image post'}`,body,labels:[LABEL]})
+    });
+    document.getElementById('postText').value='';
+    pendingImages=[];pendingFiles=[];
+    renderPreview();loadFeed();
+  }catch(e){alert('发布失败: '+e.message)}
+  finally{btn.disabled=false;btn.textContent='发布'}
+}
+
+// ── EDIT ──
+function openEdit(num,btn){
+  const item=btn.closest('.feed-item');
+  const textEl=item.querySelector('.feed-text');
+  editingIssueNum=num;
+  document.getElementById('editText').value=textEl?textEl.textContent:'';
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('show');editingIssueNum=null}
+async function saveEdit(){
+  const text=document.getElementById('editText').value.trim();
+  if(!text||!editingIssueNum)return;
+  try{
+    await api(`/repos/${REPO}/issues/${editingIssueNum}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({body:text})
+    });
+    closeEdit();loadFeed();
+  }catch(e){alert('保存失败: '+e.message)}
+}
+
+// ── DELETE ──
+async function deletePost(num){
+  if(!confirm('确定删除？'))return;
+  try{
+    await api(`/repos/${REPO}/issues/${num}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({state:'closed'})
+    });
+    loadFeed();
+  }catch(e){alert('删除失败: '+e.message)}
+}
+
+// ── UTILS ──
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function showImg(src){document.getElementById('imgModalImg').src=src;document.getElementById('imgModal').classList.add('show')}
+function switchPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.sidebar nav a').forEach(a=>a.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(window.innerWidth<=768)toggleSidebar();
+  window.scrollTo(0,0);
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ── INIT ──
+updateAuthUI();
+loadFeed();
+</script>
+</body>
+</html>

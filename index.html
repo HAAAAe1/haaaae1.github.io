@@ -108,6 +108,13 @@ a:hover{text-decoration:underline}
 .pf-bio{font-size:12px;color:var(--text2);line-height:1.5;margin-top:8px}
 .pf-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
 .pf-link:hover{text-decoration:underline}
+.clock-box{margin-top:14px;text-align:center;padding:10px 0 6px;border-top:1px solid var(--border)}
+.clock-time{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.clock-date{font-size:12px;color:var(--text3);margin-top:2px}
+.stat-row{display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.stat-row div{text-align:center;flex:1}
+.stat-row b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+.stat-row span{font-size:11px;color:var(--text3)}
 /* coverflow */
 .cf-stage{position:relative;height:434px;perspective:800px;overflow:hidden;border-radius:8px;width:calc(100% + 32px);margin:0 -16px}
 .cf-card{position:absolute;top:2px;left:50%;width:320px;height:430px;margin-left:-160px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 9px;overflow-y:auto;overflow-x:hidden;font-size:11px;line-height:1.55;color:var(--text2);box-sizing:border-box;transition:transform .4s ease,opacity .4s ease;scrollbar-width:thin}
@@ -313,12 +320,18 @@ a:hover{text-decoration:underline}
     <div class="pf-top"><img class="pf-avatar" src="https://github.com/HAAAAe1.png" alt="avatar"><div><div class="pf-name">CA</div><div class="pf-login">HAAAAe1</div></div></div>
     <div class="pf-bio">只是用ai生成些自己用的东西</div>
     <a class="pf-link" href="https://github.com/HAAAAe1" target="_blank">GitHub 主页 →</a>
+    <div class="clock-box"><div class="clock-time" id="clockTime">--:--:--</div><div class="clock-date" id="clockDate"></div></div>
     <div class="rail-title" style="margin-top:16px">项目</div>
     <div class="cf-stage" id="cfStage"></div>
     <div class="cf-nav">
       <button onclick="cfMove(-1)" aria-label="上一个">‹</button>
       <span class="cf-idx" id="cfIdx"></span>
       <button onclick="cfMove(1)" aria-label="下一个">›</button>
+    </div>
+    <div class="stat-row">
+      <div><b id="stPosts">0</b><span>动态</span></div>
+      <div><b>10</b><span>项目</span></div>
+      <div><b id="stImgs">0</b><span>图片</span></div>
     </div>
   </div>
 </aside>
@@ -405,8 +418,10 @@ async function loadFeed(){
   try{
     const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=open&sort=created&direction=desc&per_page=50`);
     if(!issues.length){
-      el.innerHTML='<div class="feed-empty">还没有动态</div>';return;
+      el.innerHTML='<div class="feed-empty">还没有动态</div>';document.getElementById('stPosts').textContent=0;document.getElementById('stImgs').textContent=0;return;
     }
+    document.getElementById('stPosts').textContent=issues.length;
+    document.getElementById('stImgs').textContent=issues.reduce((n,iss)=>{const p1=(iss.body||'').split('---IMAGES---')[1];return n+(p1?p1.split('---FILES---')[0].split('\n').filter(l=>l.startsWith('![')).length:0)},0);
     el.innerHTML=issues.map(iss=>{
       const body=iss.body||'';
       // Parse: first line = text, then ---IMAGES--- and ---FILES--- sections
@@ -636,6 +651,7 @@ let cfIdx=0;
 // ── INIT ──
 updateAuthUI();
 cfRender();cfApply();
+(function(){const p=n=>String(n).padStart(2,'0');function tick(){const d=new Date();document.getElementById('clockTime').textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());document.getElementById('clockDate').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`;}tick();setInterval(tick,1000);})();
 loadFeed();
 </script>
 </body>

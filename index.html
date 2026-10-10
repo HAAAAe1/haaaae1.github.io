@@ -336,7 +336,8 @@ async function api(path,opts={}){
   if(token)h['Authorization']=`Bearer ${token}`;
   const res=await fetch(API+path,{...opts,headers:{...h,...opts.headers}});
   if(!res.ok){let msg=res.statusText;try{const j=await res.json();if(j.message)msg=j.message}catch(_){}throw new Error(`${res.status} ${msg}`)}
-  return res.json();
+  const txt=await res.text();
+  return txt?JSON.parse(txt):{};
 }
 
 // ── UPLOAD ASSET (issue body is capped at 64KB, so assets go to repo) ──
@@ -435,18 +436,19 @@ async function publish(){
   if(pendingImages.length||pendingFiles.length){
     try{
       const now=Date.now();
-      const imgUrls=await Promise.all(pendingImages.map((s,i)=>{
+      const imgs=pendingImages.filter(s=>typeof s==='string'&&s);
+      const files=pendingFiles.filter(f=>f&&f.name&&f.data);
+      const imgUrls=await Promise.all(imgs.map((s,i)=>{
         const m=s.match(/^data:image\/(\w+);base64,/);
         return uploadAsset(`uploads/img-${now}-${i}.${m?m[1].replace('jpeg','jpg'):'png'}`,s.replace(/^data:[^,]+,/,''));
       }));
-      const fileUrls=await Promise.all(pendingFiles.map((f,i)=>{
-        const ext=(f.name.match(/\.(\w+)$/)||['','bin'])[1];
+      const fileUrls=await Promise.all(files.map((f,i)=>{
         return uploadAsset(`uploads/file-${now}-${i}-${f.name.replace(/[^\w.\u4e00-\u9fa5-]/g,'_')}`,f.data.replace(/^data:[^,]+,/,''));
       }));
       body+='\n\n---IMAGES---\n';
       body+=imgUrls.map(u=>`![img](${u})`).join('\n');
       body+='\n\n---FILES---\n';
-      body+=fileUrls.map((u,i)=>`- [${pendingFiles[i].name}](${u})`).join('\n');
+      body+=fileUrls.map((u,i)=>`- [${files[i].name}](${u})`).join('\n');
     }catch(e){alert('附件上传失败: '+e.message);return}
   }
 
@@ -487,15 +489,11 @@ async function saveEdit(){
   }catch(e){alert('保存失败: '+e.message)}
 }
 
-// ── DELETE ──
+// ── DELETE (real, irreversible) ──
 async function deletePost(num){
-  if(!confirm('确定删除？'))return;
+  if(!confirm('确定删除？物理删除，不可恢复！'))return;
   try{
-    await api(`/repos/${REPO}/issues/${num}`,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({state:'closed'})
-    });
+    await api(`/repos/${REPO}/issues/${num}`,{method:'DELETE'});
     loadFeed();
   }catch(e){alert('删除失败: '+e.message)}
 }

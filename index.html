@@ -343,7 +343,7 @@ async function api(path,opts={}){
 async function loadFeed(){
   const el=document.getElementById('feed');
   try{
-    const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=all&sort=created&direction=desc&per_page=50`);
+    const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=open&sort=created&direction=desc&per_page=50`);
     if(!issues.length){
       el.innerHTML='<div class="feed-empty">还没有动态</div>';return;
     }

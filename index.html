@@ -95,26 +95,39 @@ a:hover{text-decoration:underline}
 .project-card{background:var(--bg);border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-bottom:16px;transition:box-shadow .2s}
 @media(min-width:1000px){#page-projects.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}#page-projects.active h2{grid-column:1/-1}#page-projects.active .project-card{margin-bottom:0}}
 
-/* RIGHT RAIL - project carousel */
-.rail{display:none;flex:0 0 280px;margin-left:auto;padding:24px 24px 24px 0}
-@media(min-width:1560px){.rail{display:block}}
-.rail-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
-.rail-title{font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:12px}
-.pc-viewport{overflow:hidden;border-radius:8px;cursor:grab;touch-action:pan-y}
-.pc-viewport:active{cursor:grabbing}
-.pc-track{display:flex;transition:transform .35s ease}
-.pc-slide{flex:0 0 100%;padding:2px 2px 6px}
-.pc-name{font-weight:700;font-size:15px;margin-bottom:6px;word-break:break-all}
-.pc-img{width:100%;height:132px;object-fit:cover;border-radius:8px;border:1px solid var(--border);margin-bottom:10px;display:block;background:var(--bg2)}
-.pc-meta{font-size:12px;color:var(--text3);margin-top:8px}
-.pc-desc{font-size:13px;color:var(--text2);line-height:1.6;min-height:84px}
-.pc-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
-.pc-link{display:inline-block;margin-top:12px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
-.pc-link:hover{text-decoration:underline}
-.pc-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-.pc-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;color:var(--text2);line-height:1;transition:all .2s}
-.pc-nav button:hover{border-color:var(--accent);color:var(--accent)}
-.pc-idx{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
+/* RIGHT RAIL - profile + project coverflow */
+.rail{display:none;flex:0 0 240px;margin-left:auto;padding:24px 24px 24px 0}
+@media(min-width:1500px){.rail{display:block}}
+.rail-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.rail-title{font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:10px}
+/* profile */
+.pf-top{display:flex;gap:10px;align-items:center}
+.pf-avatar{width:44px;height:44px;border-radius:50%;border:1px solid var(--border)}
+.pf-name{font-weight:700;font-size:15px}
+.pf-login{font-size:12px;color:var(--text3)}
+.pf-bio{font-size:12px;color:var(--text2);line-height:1.5;margin-top:8px}
+.pf-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
+.pf-link:hover{text-decoration:underline}
+/* coverflow */
+.cf-stage{position:relative;height:434px;perspective:800px;overflow:hidden;border-radius:8px}
+.cf-card{position:absolute;top:2px;left:50%;width:150px;height:430px;margin-left:-75px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 9px;overflow-y:auto;overflow-x:hidden;font-size:11px;line-height:1.55;color:var(--text2);box-sizing:border-box;transition:transform .4s ease,opacity .4s ease;scrollbar-width:thin}
+.cf-card.is-center{transform:translateX(0) scale(1);opacity:1;z-index:3;background:var(--bg)}
+.cf-card.is-prev{transform:translateX(-88%) scale(.78) rotateY(20deg);opacity:.4;z-index:2}
+.cf-card.is-next{transform:translateX(88%) scale(.78) rotateY(-20deg);opacity:.4;z-index:2}
+.cf-card.is-hidden{transform:scale(.6);opacity:0;z-index:1;pointer-events:none}
+.cf-card::-webkit-scrollbar{width:4px}
+.cf-card::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px}
+.cf-name{font-weight:700;font-size:13px;color:var(--text);margin-bottom:6px;word-break:break-all}
+.md-h{font-weight:700;color:var(--text);margin:8px 0 4px;font-size:12px}
+.md-li{margin:2px 0}
+.md-hr{height:1px;background:var(--border);margin:8px 0}
+.cf-card pre{background:var(--bg3);padding:6px;border-radius:6px;font-size:10px;white-space:pre-wrap;word-break:break-all;margin:6px 0;overflow-x:auto}
+.cf-card code{background:var(--bg3);padding:0 3px;border-radius:3px;font-size:10px}
+.cf-card b{color:var(--text)}
+.cf-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.cf-nav button{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:15px;color:var(--text2);line-height:1;transition:all .2s}
+.cf-nav button:hover{border-color:var(--accent);color:var(--accent)}
+.cf-idx{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
 .project-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .project-name{font-size:16px;font-weight:700;margin-bottom:4px}
 .project-desc{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
@@ -297,12 +310,17 @@ a:hover{text-decoration:underline}
 </div>
 <aside class="rail">
   <div class="rail-card">
+    <div class="pf-top"><img class="pf-avatar" src="https://github.com/HAAAAe1.png" alt="avatar"><div><div class="pf-name">CA</div><div class="pf-login">HAAAAe1</div></div></div>
+    <div class="pf-bio">只是用ai生成些自己用的东西</div>
+    <a class="pf-link" href="https://github.com/HAAAAe1" target="_blank">GitHub 主页 →</a>
+  </div>
+  <div class="rail-card">
     <div class="rail-title">项目</div>
-    <div class="pc-viewport"><div class="pc-track" id="pcTrack"></div></div>
-    <div class="pc-nav">
-      <button onclick="pcMove(-1)" aria-label="上一个">‹</button>
-      <span class="pc-idx" id="pcIdx"></span>
-      <button onclick="pcMove(1)" aria-label="下一个">›</button>
+    <div class="cf-stage" id="cfStage"></div>
+    <div class="cf-nav">
+      <button onclick="cfMove(-1)" aria-label="上一个">‹</button>
+      <span class="cf-idx" id="cfIdx"></span>
+      <button onclick="cfMove(1)" aria-label="下一个">›</button>
     </div>
   </div>
 </aside>
@@ -575,70 +593,51 @@ const PROJECTS=[
  {name:'bom-generator-tool',desc:'Creo PDF 图纸转 BOM 物料清单工具。',tags:['Python','BOM'],url:'https://github.com/HAAAAe1/bom-generator-tool'},
  {name:'bom-generator',desc:'从 Creo PDF 图纸生成 BOM 物料清单。',tags:['Python','BOM'],url:'https://github.com/HAAAAe1/bom-generator'}
 ];
-let pcIdx=0;
-function pcSlideHtml(p){
-  const stats=p.stars!==undefined?`<div class="pc-meta">⭐ ${p.stars}　🍴 ${p.forks}　更新 ${p.updated||''}</div>`:'';
-  const tags=[...new Set([...(p.tags||[]),...(p.topics||[])])].slice(0,6);
-  return `<div class="pc-slide">
-    <a href="${p.url}" target="_blank"><img class="pc-img" src="https://opengraph.githubassets.com/1/HAAAAe1/${p.name}" loading="lazy" onerror="this.style.display='none'"></a>
-    <div class="pc-name">${p.name}</div>
-    <div class="pc-desc">${p.desc}</div>${stats}
-    <div class="pc-tags">${tags.map(t=>`<span class="project-tag">${t}</span>`).join('')}</div>
-    <a class="pc-link" href="${p.url}" target="_blank">在 GitHub 查看 →</a>
-  </div>`;
-}
-function pcRender(){
-  document.getElementById('pcTrack').innerHTML=PROJECTS.map(pcSlideHtml).join('');
-}
-// live stats from GitHub API, cached 1h in localStorage
-async function pcLoadStats(){
-  try{
-    let data=null;
-    const cached=JSON.parse(localStorage.getItem('pc_stats')||'null');
-    if(cached&&Date.now()-cached.t<3600e3)data=cached.d;
-    else{
-      const res=await fetch('https://api.github.com/users/HAAAAe1/repos?per_page=100&sort=updated');
-      if(res.ok){data=await res.json();localStorage.setItem('pc_stats',JSON.stringify({t:Date.now(),d:data}))}
+const PC_README={"creo-balloon":"﻿# H — Creo 工程图圆圈序号（球标）插件\n\n在 Creo 工程图上**点位置放圆圈球标、编号自动管理**的 TOOLKIT 插件。\n不依赖 BOM 表，纯独立符号实例，想怎么排就怎么排。\n\n- ✅ **添加球标**：点一下放一个，编号自动 +1；支持连续放置，不用反复点按钮\n- ✅ **插入球标**：中间补插时，新球标顶上该编号，后面的号全部自动顺延\n- ✅ **删除球标**：删掉中间某个，其余序号自动补齐重排\n- ✅ **重排序号**：一键把所有球标压实成 1、2、3…\n- ✅ **一份 DLL 通吃 Creo 6.0 ~ 12.0**（用 Creo 6.0 Toolkit 编译，旧版编译的程序 PTC 官方保证可在更新版本上运行）\n- ✅ **加载后功能区自动出现「球标」选项卡**，不用手工拖按钮\n- ✅ **路径全自动**：插件运行时自查所在目录，整个文件夹拷到哪都能用\n\n典型场景 —— 图纸上已排好 1~18 号，发现漏了一个尺寸要插在 12 号前面：\n点「插入球标」→ 点新尺寸旁的放置位置 → 点现在显示 12 的那个球标。\n新球标自动变成 12 号，原 12~18 全部变成 13~19 号，位置都不用动，一次点完。\n\n---\n\n## 快速安装（3 步，1 分钟）\n\n1. **放置文件**：把整个 `H` 文件夹复制到纯英文、无空格的目录，例如 `D:\\H`\n   （放在别的位置先双击运行一次 `setup.bat`，它会自动修正注册文件里的路径）\n2. **注册插件**：记事本打开 Creo 的 `config.pro`，最后加一行：\n   ```\n   protkdat D:\\H\\H.dat\n   ```\n   （放在别的目录就把路径换成实际位置；也可以在 Creo 里\n   工具 → 辅助应用程序 → 注册 → 选中 H.dat → 启动，但只当次生效）\n3. **重启 Creo**。打开任意工程图，选项卡栏最右侧出现「**球标**」选项卡，装好了。\n\n> 如果点按钮提示\"未找到球标符号文件\"：看插件目录下自动生成的 `h_load.log`，\n> 里面写明了原因（符号文件是否缺失、三条加载路径各自的返回码），把日志发给作者即可定位。\n\n## 使用方法\n\n打开一张工程图，功能区「球标」选项卡里有 4 个按钮：\n\n| 按钮 | 行为 |\n|------|------|\n| **添加球标** | 点图纸位置放一个圆圈球标，编号取当前最大号 +1。**连续放置**：放完一个直接点下一个位置，全部放完按鼠标中键（滚轮按下）/ 右键 / Esc 结束 |\n| **插入球标** | 先点放置位置，再点一个已有球标；新球标就用那个编号，它以及比它大的号全部自动 +1 |\n| **删除球标** | 点选要删除的球标，删除后其余序号自动重排补齐 |\n| **重排序号** | 把所有球标压实成 1、2、3…（补齐删除留下的空号） |\n\n## 故障排查\n\n插件目录下每次启动都会写 `h_load.log`，关键行：\n\n- `ProCmdActionAdd(...) -> 0`：0 = 命令注册成功（返回 -28 也不影响按钮功能，可忽略）\n- `ProRibbonDefinitionfileLoad(...) -> 0`：功能区加载成功。\n  `-4` = rbn 文件没找到（确认 `text\\ribbon\\toolkitribbonui.rbn` 存在）；\n  `-16` = 格式不对（按下方说明用 Creo 导出一份正规的）\n- `HLoadSymbol: ... EXISTS / MISSING!`：符号文件在不在。`MISSING!` 说明发出去的包不完整，少了 `symbols` 文件夹\n- `HLoadSymbol: OK via [1|2|3]`：符号最终走通哪条加载路（1=pro_symbol_dir 相对路径，2=复制到工作目录，3=绝对路径兜底）\n\n常见现象：\n\n- **提示\"未找到球标符号文件\"**：把 `symbols\\123.sym` 复制到 Creo 当前工作目录，\n  或在 `config.pro` 里设 `pro_symbol_dir D:\\H\\symbols`（已有该行就别加第二行，直接把符号放进它指向的目录）\n- **提示\"请在工程图界面执行此命令\"**：这三个命令只能在工程图（Drawing）模式下用\n- **功能区没有「球标」选项卡**：先确认工程图模式（选项卡只在工程图出现）；\n  仍没有则按 [ Creo 自定义功能区 ] 导出正规 rbn：`config.pro` 加\n  `tk_enable_ribbon_custom_save yes` 重启 → 文件 → 选项 → 自定义功能区 →\n  新建选项卡/组 → 命令来源选「所有 ProTk 命令」添加 4 个按钮 →\n  导入/导出 → 保存辅助应用程序用户界面 → 把生成的 rbn 复制覆盖 `text\\ribbon\\` 下同名文件\n\n## ⚠️ 发给别人之前：必须先解锁\n\n别人打开 Creo 弹出「**应用程序 \"H\" 在分配到您的位置之前未被解锁**」，\n不是插件写错，是 PTC 对 TOOLKIT 插件的统一规定：编译出的 DLL 默认锁定，\n只有装了 Creo Parametric TOOLKIT 开发许可的电脑才能加载，分发前必须解锁。\n\n1. 完全退出 Creo（任务管理器确认没有 `xtop.exe`）\n2. 双击插件目录里的 `unlock.bat`，看到「解锁成功」即可\n3. 打包发给别人\n\n两条铁律：\n\n- **每次重新编译 H.dll 之后都要重新跑一次 unlock.bat**（链接时会重新写入锁定标记）\n- **解锁之后不要再改动 H.dll 哪怕一个字节**（改动后会被重新当成锁定状态）\n\n解锁会占用一个 TOOLKIT 许可几秒钟（最长 15 分钟），正常现象。\n\n## 球标符号版本注意（`symbols\\123.sym`）\n\nCreo 的文件只**向上兼容**：新版能读旧版，旧版读不了新版，`.sym` 一模一样。\n\n- 本插件的 `123.sym` 用 **Creo 6.0.2.0** 存出（格式级别 3700），Creo 6~12 全能读\n- **千万别用新版 Creo 打开它再保存** —— 保存会升级成新版格式，对方的 Creo 6 立刻读不了\n- 以后换符号同理：发给谁，就用**对方那个版本或更老**的 Creo 去存\n\n## 重新编译（可选）\n\n需要 Visual Studio 2022（含 C++ 生成工具）和 Creo 6.0 的 Toolkit 开发包\n（Creo 安装介质自带，没勾「API Toolkits / Creo Parametric TOOLKIT」组件的话用安装程序补装）：\n\n1. 把 `makefile` 里 `CREO6_SDK` 改成 Toolkit 根目录（含 `includes` 与 `x86e_win64\\obj`）\n2. 双击 `build.bat`（或 `nmake /f makefile`）\n3. **重新编译后记得再跑一次 `unlock.bat`**\n\n用旧版 Toolkit 编译是刻意为之：PTC 官方规则保证旧版编译的 DLL 可在相同或更新的\nCreo 上运行（\"Creo Parametric build newer than Creo TOOLKIT build: always supported\"），\n反过来不保证。所以统一用 Creo 6.0 Toolkit 编译，一份 DLL 覆盖 6.0 ~ 12.0。\n\n## 文件结构\n\n```\nH/\n├── H.dll                        插件主程序\n├── H.dat                        TOOLKIT 注册文件\n├── setup.bat                    一键把 H.dat 路径改成当前文件夹\n├── unlock.bat                   分发前解锁（见上文）\n├── build.bat / makefile         重新编译用\n├── src/\n│   └── h_main.c                 插件源码\n├── text/\n│   ├── ribbon/toolkitribbonui.rbn   功能区定义（自动挂「球标」选项卡）\n│   ├── chinese_cn/h_msg.txt         中文界面文字\n│   └── usascii/h_msg.txt            英文界面文字\n└── symbols/\n    └── 123.sym                 圆形球标符号（数字为可变文本，Creo 6 格式）\n```\n\n---\n\n与 BOM 表无关，纯粹在工程图上点位置放圆圈序号：末尾加 → 自动 +1；\n中间补插 → 后面的号自动顺延；删掉中间某个 → 其余序号自动补齐重排。\n","maodie-slot-machine":"# 耄耋机 🎰\n\nTRSS-Yunzai 插件，一个以耄耋为主题的虚拟币小游戏合集。\n\n## 功能\n\n### 🎰 老虎机\n- `#耄耋机` — 免费转（每日3次，固定5000币）\n- `#耄耋机 10000` — 下注10000币\n- `#耄耋机余额` — 查看个人余额和状态\n\n**符号赔率：**\n- 🍒🍋🍊 三同=5倍 | 🔔⭐ 三同=10倍\n- 💎 三同=20倍 | 7️⃣ 三同=77倍（JACKPOT）\n- 💣 1个=1x扣 | 2个=1.5x扣 | 3个=2x扣\n- 🐱 三只耄耋=代币归零+清债\n\n**连胜倍率：** 2连×1.2 | 3连×1.5 | 5连×2\n\n### ⛏️ 挖矿\n- `#耄耋机挖矿` — 免费挖矿，30秒冷却\n- 💎 宝石=5万 | 🔥 火焰石=2万 | 💠 碎钻=1.5万 | ⭐ 星尘=1万\n- 🪨 煤炭=5千 | 🪙 金币=3千 | 🪹 空 | 🐱 耄耋=+100万清债\n\n### ⚔️ 对战\n- `#耄耋机对战 @某人 <金额>` — 发起对战\n- `#耄耋机接受` / `#耄耋机拒绝` — 接受/拒绝对战\n- 双方各押注，随机数比大小，赢家通吃！2分钟过期\n\n### 🏔️ 大冒险（Roguelike爬塔）\n\n入场1万币，3层循环爬塔，死亡归零！\n\n**流程：**\n1. **事件层** — 3选1随机事件（18种事件，带趣味描述）\n2. **商店层** — 购买道具（18种道具，每轮最多买3个，不可重复购买）\n3. **Boss战** — 骰子分配策略战斗（d20骰子，分配攻防）\n\n**命令：**\n- `#耄耋机冒险` — 开始冒险\n- `#选1` / `#选2` / `#选3` — 选择事件\n- `#买 1 5 7` — 购买道具（可批量）\n- `#跳过` — 跳过商店\n- `#攻7防3` — Boss战骰子分配（7颗攻击+3颗防御）\n- `#全攻` / `#全防` — 快捷分配\n- `#继续冒险` — Boss胜利后进入下一轮（+1骰子+随机诅咒）\n- `#撤离` — 带走所有奖励\n- `#冒险状态` — 查看当前状态\n- `#冒险撤退` — 放弃冒险\n- `#冒险排行` — 冒险历史排行\n\n**Boss系统：**\n- 10个Boss，每个有专属效果\n- 每轮Boss血量+80，攻击+15\n- Boss出招：劈砍/重击/蓄力/连击/吸血/毒雾/毁灭一击（5%概率）\n- 第1回合显示Boss行动，每回合结束后显示下回合行动\n\n**Boss专属效果：**\n| Boss | 效果 |\n|---|---|\n| 远古耄耋 | 每回合回复10HP |\n| 暴怒耄耋 | 每回合攻击+5（持续叠加） |\n| 暗影耄耋 | 每3回合闪避一次攻击 |\n| 狂暴耄耋 | 血量低于50%时攻击翻倍 |\n| ???耄耋 | 每回合随机触发其他Boss效果 |\n| 堕落耄耋 | 每回合吸走玩家5%当前血量 |\n| 冰霜耄耋 | 每2回合冻结玩家1颗骰子 |\n| 烈焰耄耋 | 攻击附带灼烧，下回合额外扣10血 |\n| 雷霆耄耋 | 30%概率雷击，无视防御扣25血 |\n| 虚空耄耋 | 每回合永久禁用玩家1个道具效果 |\n\n**诅咒系统：**\n每轮Boss胜利后随机获得1个诅咒，永久叠加。\n\n- 轮2（轻度）：嗜血/虚弱/感知下降/嘲讽/脆弱/迷雾/贪婪\n- 轮3（中度）：压力/迟钝/嘲弄/淬毒/裂甲/吞噬\n- 轮4（重度）：契约/反噬/削骨\n\n**道具系统（18种，全部即时生效）：**\n\n生命类：\n- 血瓶（5000）+30血 | 大血瓶（12000）+60血 | 生命之心（20000）+20血上限+20血 | 重生十字（25000）死亡复活\n\n攻击类：\n- 攻击药水（8000）+3攻 | 战斗精通（15000）+5攻 | 暴击项链（18000）暴击率+10%\n\n骰子类：\n- 骰子袋（12000）+1颗 | 幸运骰子（16000）点数+1\n\n防御类：\n- 护盾（10000）挡一次攻击 | 铁壁（15000）减伤+5 | 反甲（20000）反弹10伤害 | 生命汲取（18000）攻击回复10%血量\n\n趣味道具（带负面效果）：\n- 耄耋之眼（25000）看到全部出招表，Boss攻击+5\n- 幸运草（10000）暴击×3，暴击率-10%\n- 赌徒之心（15000）骰子上限30，下限不限\n- 耄耋祝福（30000）骰子+5点，最大血量-20\n- 偷窃手套（20000）Boss奖励+50%，Boss血量+30%\n\n### 💳 借贷\n- `#耄耋机借 10000` — 借10000币（无利息，单次最多100万）\n- `#耄耋机还 5000` — 还款5000币\n- `#耄耋机欠款` — 查看个人欠款\n- `#耄耋机欠款榜` — 谁欠最多\n\n### 📊 排行榜\n- `#耄耋机排行` — 持币/欠款/连胜排行\n- `#耄耋机功能` — 查看功能说明（转发消息）\n\n### 👑 管理员\n- `#耄耋机清空 <QQ号>` — 清空用户数据\n- `#耄耋机还清 <QQ号>` — 清除用户欠款\n- `#耄耋机驱逐 <QQ号>` — 驱逐用户10分钟无法下注\n- `#耄耋机解驱 <QQ号>` — 解除用户驱逐\n\n## 安装\n\n将 `slot-machine.js` 放入 TRSS-Yunzai 的 `plugins/example/` 目录，自动热重载。\n\n## 数据\n\n数据存储在 `plugins/example/data/slot-data.json`。\n\n## 许可\n\nMIT\n","guardian":"# Guardian 🛡️\n\n摄像头人物检测 + 窗口自动隐藏工具。\n\n检测到多人时自动最小化指定窗口，人离开后自动恢复显示。\n\n## 功能\n\n- 📷 摄像头实时画面 + 人框标注\n- 👥 检测到指定人数自动最小化窗口\n- 🔄 人离开后自动恢复显示（可设延迟）\n- ☑️ 运行时动态选择要隐藏的窗口\n- 🚫 框选多个排除区域（区域内的人不计入检测）\n- ⏸ 一键暂停/恢复监控\n- 🖥 系统托盘运行，关闭窗口不退出\n- 👁 人数浮窗：小窗口实时显示检测人数（可拖拽、可隐藏）\n\n## 安装\n\n```bash\npip install -r requirements.txt\n```\n\n依赖：ultralytics, opencv-python, pywin32, pystray, Pillow\n\n## 使用\n\n```bash\npython guardian_gui.py\n```\n\n1. 打开界面，点击 **🔄 刷新** 扫描当前窗口\n2. 勾选要隐藏的窗口，点 **💾 保存选择**\n3. 在摄像头画面上**拖拽**画出排除区域（如身后位置）\n4. 程序自动监控，检测到多人时最小化目标窗口\n\n## 配置\n\n| 项目 | 默认值 | 说明 |\n|------|--------|------|\n| 触发阈值 | 2人 | 检测到几人时触发 |\n| 恢复延迟 | 3秒 | 人离开后等待多久恢复 |\n| 摄像头 | 0 | 摄像头编号 |\n| 检测间隔 | 0.5秒 | 每次检测间隔 |\n| 置信度 | 0.5 | YOLO 检测阈值 |\n\n## 排除区域\n\n在摄像头画面上用鼠标拖拽画框，框内的人不计入检测。支持多个区域，适合身后有人但不想触发隐藏的场景。\n\n## 人数浮窗\n\n启动后屏幕右上角会显示一个小浮窗，实时显示当前检测到的人数：\n- 🟢 绿色：正常监控\n- 🟡 黄色：达到阈值（即将触发隐藏）\n- 🔴 红色：窗口已隐藏\n\n可拖拽到任意位置。右键浮窗可隐藏或退出。托盘菜单也可切换浮窗开关。\n\n## 截图\n\n```\n┌────────────────────────────────────┐\n│ 🟢 监控中 (0人)             人数: 0 │\n│ ┌────────────────────────────────┐ │\n│ │       摄像头实时画面            │ │\n│ │    (红色虚线=排除区域)          │ │\n│ └────────────────────────────────┘ │\n│ [⏸暂停]                            │\n│────────────────────────────────────│\n│ ☑️ 要隐藏的窗口              🔄刷新 │\n│ ┌────────────────────────────────┐ │\n│ │ ✓ [12345] Creo Parametric 12   │ │\n│ │   [67890] GitHub - Edge        │ │\n│ └────────────────────────────────┘ │\n│────────────────────────────────────│\n│ 触发阈值:[2]人 恢复延迟:[3]秒       │\n│                    [💾保存选择]     │\n└────────────────────────────────────┘\n```\n\n## 系统要求\n\n- Windows 10/11\n- Python 3.10+\n- 摄像头\n\n## License\n\nMIT\n","novel-reader":"# 摸鱼看书 🐟📖\n\n轻量级 EPUB 阅读器，专为摸鱼设计。\n\n## 特性\n\n- **窗口随意缩放** — 最小 120×100，缩到任务栏旁边看\n- **鼠标离开自动变淡** — 鼠标移出窗口后透明度降到 15%，就是个淡淡的影子\n- **整章加载 + 平滑滚动** — 不分页，滚轮/方向键/空格逐行滚动\n- **目录弹窗** — 菜单栏点「目录」弹出搜索+列表窗口，双击跳转\n- **进度自动保存** — 关掉再打开接着上次的位置看\n- **窗口置顶** — 视图菜单可切换\n- **字体/背景色自定义** — Ctrl++ 放大，Ctrl+- 缩小\n- **Escape 最小化** — 一键缩到任务栏\n\n## 快捷键\n\n| 快捷键 | 功能 |\n|--------|------|\n| Ctrl+O | 打开 EPUB |\n| Ctrl++ | 字体放大 |\n| Ctrl+- | 字体缩小 |\n| Ctrl+Q | 退出 |\n| ← → | 上/下一章 |\n| ↑ ↓ / 滚轮 | 平滑滚动 |\n| PageUp/Down | 翻页 |\n| 空格 | 下一页 |\n| Escape | 最小化窗口 |\n\n## 使用方法\n\n1. 安装 Python 3.x\n2. 双击 `启动摸鱼看书.bat`（自动安装依赖，无黑框）\n\n或者命令行运行：\n```bash\npip install ebooklib\npython reader.py\n```\n\n## 截图\n\n窗口很小，鼠标离开后自动变淡：\n\n![screenshot](https://github.com/HAAAAe1/novel-reader/raw/master/screenshot.png)\n\n## 依赖\n\n- Python 3.x\n- tkinter（内置）\n- ebooklib\n- lxml（ebooklib 依赖）\n","MyPlugins":"# MyPlugins\n\n个人 Dalamud 第三方插件仓库（FF14）。\n\n## 添加方法\n\n1. 打开 **Dalamud 设置 → 实验性功能 → 自定义插件库**\n2. 添加以下地址：\n   ```\n   https://raw.githubusercontent.com/HAAAAe1/MyPlugins/main/pluginmaster.json\n   ```\n3. 点击页面顶部的 **保存**\n4. 打开 **Dalamud 插件管理器**，即可浏览/安装本仓库中的插件\n\n## 插件列表\n\n| 名称 | 说明 |\n|------|------|\n| _(暂无)_ | 还没加插件 |\n\n## 说明\n\n- `pluginmaster.json` 遵循 [Dalamud 第三方插件仓库格式](https://github.com/goatcorp/Dalamud/wiki/Third-Party-Plugin-Repo-Format)\n- 每个插件条目需要：`Name`、`InternalName`、`AssemblyVersion`、`Author`、`Punchline`、`Description`、`DalamudApiLevel`、`DownloadLinkInstall`、`DownloadLinkUpdate`\n- 插件 zip 通过 GitHub Releases 发布（tag = 版本号，附件 = `latest.zip`）\n","roll_maodie":"# TRSS-Yunzai 今日耄耋插件 🐊\n\n每日为用户随机抽取专属“今日耄耋”表情，并生成耄耋图鉴收集系统。适用于 [TRSS-Yunzai](https://github.com/TimeRainStarSky/Yunzai) 机器人框架。\n\n> 本插件由 AI（OpenClaw / MiMo）编写，包括插件代码、图鉴生成脚本及耄耋表情描述文案。\n\n## 功能\n\n| 指令 | 说明 |\n|------|------|\n| `#今日耄耋` | 抽取今天属于你的专属耄耋表情 |\n| `#随机耄耋` | 随机抽取一只耄耋（每天可多次） |\n| `#查找耄耋 名字` | 搜索指定耄耋 |\n| `#耄耋图鉴` | 生成图片形式的耄耋收集图鉴 |\n\n### 特性\n\n- 每人每天只能抽取一次，同一天结果固定（基于日期+用户ID的确定性哈希）\n- 随机抽取功能，每天可多次，不记录收藏\n- 每次抽取自动记录收藏，支持图鉴进度追踪\n- 图鉴以图片形式展示：已收集的耄耋彩色显示+绿色边框，未收集的灰色剪影\n- 支持自定义耄耋库和图片（png/jpg/gif/webp）\n- 可扩展为任意表情包收集系统\n\n## 安装\n\n### 1. 复制插件文件\n\n将以下文件复制到 TRSS-Yunzai 的 `plugins/` 目录：\n\n```\nTRSS-Yunzai/\n└── plugins/\n    └── rollmaodie/\n        ├── rollmaodie.js    # 插件主逻辑\n        ├── maodie.json      # 耄耋数据\n        ├── image/           # 耄耋图片（文件名与 id 对应）\n        └── collector.json   # 收藏数据（自动生成）\n```\n\n### 2. 安装 Python 依赖\n\n图鉴图片生成需要 Python 和 Pillow：\n\n```bash\npip install Pillow\n```\n\n### 3. 配置脚本路径\n\n编辑 `rollmaodie.js`，修改以下路径为你的实际路径：\n\n```javascript\nconst PLUGIN_DIR = '你的插件目录路径'\nconst PYTHON = 'python'  // 或 python3\nconst DEX_SCRIPT = 'rollmaodie-dex.py 的完整路径'\n```\n\n### 4. 重启 TRSS-Yunzai\n\n插件会自动热加载，也可手动重启。\n\n## 自定义耄耋库\n\n### 添加新耄耋\n\n1. 在 `image/` 目录放入图片（支持 png/jpg/gif/webp），文件名与 id 对应\n2. 在 `maodie.json` 追加条目：\n\n```json\n{\n  \"id\": \"maodie-xxx\",\n  \"name\": \"耄耋XXX\",\n  \"description\": \"简短描述\",\n  \"analysis\": \"详细性格分析\"\n}\n```\n\n### maodie.json 格式\n\n```json\n[\n  {\n    \"id\": \"maodie-wunai\",\n    \"name\": \"耄耋无奈\",\n    \"description\": \"汗流浃背的老父亲\",\n    \"analysis\": \"你圆圆的脸上写满了「我累了」...\"\n  }\n]\n```\n\n## 图鉴效果\n\n- 已收集：彩色图片 + 绿色边框\n- 未收集：灰色剪影 + 深色背景\n- 顶部进度条 + 百分比\n- 底部图例说明\n\n## 致谢\n\n本插件架构参考：\n\n- **[astrbot_plugin_rollpig](https://github.com/MegSopern/astrbot_plugin_rollpig)** — AstrBot 版今日小猪插件（原作者：MegSopern）\n- **[nonebot-plugin-rollpig](https://github.com/Bearlele/nonebot-plugin-rollpig)** — NoneBot 版今日小猪插件（原作者：Bearlele）\n- 基于上述项目的图鉴收集机制改造，适配 TRSS-Yunzai 框架\n- 耄耋表情素材来自网络，版权归原作者所有\n- 插件代码及耄耋描述文案由 AI 生成\n\n## 许可\n\nMIT License\n","bom-generator":"# BOM Generator\n\n全部由AI生成，从 Creo Parametric 导出的 PDF 零件图纸中提取信息，自动生成 BOM 物料清单（docx）。\n\n## 功能\n\n- 扫描指定目录下所有 PDF 图纸\n- 提取 title block：物料编号、名称、规格、材质、用量\n- 从技术要求提取表面处理信息\n- 基于标准模板生成 BOM 文档（docx）\n- 直径符号自动替换（φ/⌀ → Ø）\n\n## 使用\n\n```bash\npython scripts/bom_gen.py <PDF目录> <输出.docx> [模板路径]\n```\n\n模板默认使用项目内的 `模板(BOM).docx`，也可通过第三个参数指定自定义模板。\n\n## 模板结构\n\n12 列合并结构：\n\n| 序号 | 物料编号 | 名称 | 规格 | 材质 | 用量 | 表面处理 | 备注 |\n|------|----------|------|------|------|------|----------|------|\n\n## 物料编号规则\n\n- `E.F-` — 车削件\n- `B.F-` / `D.F-` — 冲压件\n- `F.F-` — 弹簧/线材件\n\n## 注意事项\n\n- 字体统一微软雅黑\n- PDF text extraction 对 Spec 字段可能提取不完整，需从图纸尺寸推断\n- 表面处理颜色可能不在 PDF 正文里，可从文件名提取（如\"深咖色\"）\n- 用量图纸不标时默认 ×1，生成后提示用户确认\n"};
+function md2html(md){
+  const inline=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g,'［$1］')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,'$1')
+    .replace(/`([^`]+)`/g,'<code>$1</code>');
+  const out=[];let inCode=false;
+  for(const ln of md.split('\n')){
+    if(ln.startsWith('```')){inCode=!inCode;out.push(inCode?'<pre>':'</pre>');continue}
+    if(inCode){out.push(esc(ln)+'\n');continue}
+    let m;
+    if(m=ln.match(/^#{1,6}\s+(.*)/))out.push('<div class="md-h">'+inline(m[1])+'</div>');
+    else if(/^\s*[-*]\s+/.test(ln))out.push('<div class="md-li">• '+inline(ln.replace(/^\s*[-*]\s+/,''))+'</div>');
+    else if(m=ln.match(/^\s*(\d+)\.\s+(.*)/))out.push('<div class="md-li">'+m[1]+'. '+inline(m[2])+'</div>');
+    else if(/^-{3,}$/.test(ln.trim()))out.push('<div class="md-hr"></div>');
+    else if(ln.trim().startsWith('|')){
+      const t=ln.replace(/^\|/,'').replace(/\|$/,'').trim();
+      if(!/^[-:\s|]+$/.test(t))out.push('<div class="md-li">｜'+inline(t)+'</div>');
     }
-    if(!data)return;
-    data.forEach(r=>{
-      const p=PROJECTS.find(x=>x.name===r.name);if(!p)return;
-      p.stars=r.stargazers_count;p.forks=r.forks_count;p.topics=r.topics||[];
-      p.desc=r.description||p.desc;p.updated=(r.pushed_at||'').slice(0,10);
-    });
-    pcRender();pcApply();
-  }catch(e){/* offline / rate-limited: static cards still work */}
+    else if(!ln.trim())out.push('');
+    else out.push(inline(ln)+'<br>');
+  }
+  return out.join('');
 }
-function pcMove(d){pcIdx=(pcIdx+d+PROJECTS.length)%PROJECTS.length;pcApply()}
-function pcApply(){
-  document.getElementById('pcTrack').style.transform=`translateX(-${pcIdx*100}%)`;
-  document.getElementById('pcIdx').textContent=`${pcIdx+1} / ${PROJECTS.length}`;
+function cfRender(){
+  document.getElementById('cfStage').innerHTML=PROJECTS.map((p,i)=>{
+    const md=PC_README[p.name]||p.desc;
+    return `<div class="cf-card" id="cfCard${i}"><div class="cf-name">${p.name}</div>${md2html(md)}<div style="margin-top:12px"><a class="pf-link" href="${p.url}" target="_blank">在 GitHub 查看 →</a></div></div>`;
+  }).join('');
 }
-// pointer-drag swipe (mouse or touch), snap on release
-function pcBind(){
-  const vp=document.querySelector('.pc-viewport'),track=document.getElementById('pcTrack');
-  let st=null,moved=false;
-  vp.addEventListener('pointerdown',e=>{st={x:e.clientX,dx:0};moved=false;track.style.transition='none';vp.setPointerCapture(e.pointerId)});
-  vp.addEventListener('pointermove',e=>{
-    if(!st)return;
-    st.dx=e.clientX-st.x;
-    if(Math.abs(st.dx)>8)moved=true;
-    track.style.transform=`translateX(calc(${-pcIdx*100}% + ${st.dx}px))`;
+function cfMove(d){cfIdx=(cfIdx+d+PROJECTS.length)%PROJECTS.length;cfApply()}
+function cfApply(){
+  PROJECTS.forEach((p,i)=>{
+    const el=document.getElementById('cfCard'+i);
+    const cls=i===cfIdx?'is-center':i===(cfIdx-1+PROJECTS.length)%PROJECTS.length?'is-prev':i===(cfIdx+1)%PROJECTS.length?'is-next':'is-hidden';
+    el.className='cf-card '+cls;
+    if(i===cfIdx)el.scrollTop=0;
   });
-  const end=()=>{
-    if(!st)return;
-    const dx=st.dx;st=null;track.style.transition='';
-    if(dx<-50)pcIdx=(pcIdx+1)%PROJECTS.length;
-    else if(dx>50)pcIdx=(pcIdx-1+PROJECTS.length)%PROJECTS.length;
-    pcApply();
-  };
-  vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',end);
-  vp.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true);
+  document.getElementById('cfIdx').textContent=`${cfIdx+1} / ${PROJECTS.length}`;
 }
+let cfIdx=0;
 
 // ── INIT ──
 updateAuthUI();
-pcRender();pcApply();pcBind();pcLoadStats();
+cfRender();cfApply();
 loadFeed();
 </script>
 </body>

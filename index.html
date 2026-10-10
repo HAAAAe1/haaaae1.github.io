@@ -335,8 +335,18 @@ async function api(path,opts={}){
   const h={'Accept':'application/vnd.github+json','User-Agent':'blog'};
   if(token)h['Authorization']=`Bearer ${token}`;
   const res=await fetch(API+path,{...opts,headers:{...h,...opts.headers}});
-  if(!res.ok)throw new Error(`${res.status} ${res.statusText}`);
+  if(!res.ok){let msg=res.statusText;try{const j=await res.json();if(j.message)msg=j.message}catch(_){}throw new Error(`${res.status} ${msg}`)}
   return res.json();
+}
+
+// ── UPLOAD ASSET (issue body is capped at 64KB, so assets go to repo) ──
+async function uploadAsset(filename,b64){
+  const res=await api(`/repos/${REPO}/contents/${filename.split('/').map(encodeURIComponent).join('/')}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({message:'blog asset: '+filename,content:b64})
+  });
+  return res.content.download_url;
 }
 
 // ── LOAD FEED ──
@@ -423,10 +433,21 @@ async function publish(){
 
   let body=text;
   if(pendingImages.length||pendingFiles.length){
-    body+='\n\n---IMAGES---\n';
-    body+=pendingImages.map(s=>`![img](${s})`).join('\n');
-    body+='\n\n---FILES---\n';
-    body+=pendingFiles.map(f=>`- [${f.name}](${f.data})`).join('\n');
+    try{
+      const now=Date.now();
+      const imgUrls=await Promise.all(pendingImages.map((s,i)=>{
+        const m=s.match(/^data:image\/(\w+);base64,/);
+        return uploadAsset(`uploads/img-${now}-${i}.${m?m[1].replace('jpeg','jpg'):'png'}`,s.replace(/^data:[^,]+,/,''));
+      }));
+      const fileUrls=await Promise.all(pendingFiles.map((f,i)=>{
+        const ext=(f.name.match(/\.(\w+)$/)||['','bin'])[1];
+        return uploadAsset(`uploads/file-${now}-${i}-${f.name.replace(/[^\w.\u4e00-\u9fa5-]/g,'_')}`,f.data.replace(/^data:[^,]+,/,''));
+      }));
+      body+='\n\n---IMAGES---\n';
+      body+=imgUrls.map(u=>`![img](${u})`).join('\n');
+      body+='\n\n---FILES---\n';
+      body+=fileUrls.map((u,i)=>`- [${pendingFiles[i].name}](${u})`).join('\n');
+    }catch(e){alert('附件上传失败: '+e.message);return}
   }
 
   const btn=document.getElementById('publishBtn');

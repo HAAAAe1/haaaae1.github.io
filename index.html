@@ -96,15 +96,18 @@ a:hover{text-decoration:underline}
 @media(min-width:1000px){#page-projects.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}#page-projects.active h2{grid-column:1/-1}#page-projects.active .project-card{margin-bottom:0}}
 
 /* RIGHT RAIL - project carousel */
-.rail{display:none;flex:0 0 300px;padding:24px 24px 24px 0}
-@media(min-width:1500px){.rail{display:block}}
+.rail{display:none;flex:0 0 280px;margin-left:auto;padding:24px 24px 24px 0}
+@media(min-width:1560px){.rail{display:block}}
 .rail-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
 .rail-title{font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:12px}
-.pc-viewport{overflow:hidden;border-radius:8px}
+.pc-viewport{overflow:hidden;border-radius:8px;cursor:grab;touch-action:pan-y}
+.pc-viewport:active{cursor:grabbing}
 .pc-track{display:flex;transition:transform .35s ease}
 .pc-slide{flex:0 0 100%;padding:2px 2px 6px}
 .pc-name{font-weight:700;font-size:15px;margin-bottom:6px;word-break:break-all}
-.pc-desc{font-size:13px;color:var(--text2);line-height:1.6;min-height:64px}
+.pc-img{width:100%;height:132px;object-fit:cover;border-radius:8px;border:1px solid var(--border);margin-bottom:10px;display:block;background:var(--bg2)}
+.pc-meta{font-size:12px;color:var(--text3);margin-top:8px}
+.pc-desc{font-size:13px;color:var(--text2);line-height:1.6;min-height:84px}
 .pc-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 .pc-link{display:inline-block;margin-top:12px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
 .pc-link:hover{text-decoration:underline}
@@ -573,20 +576,69 @@ const PROJECTS=[
  {name:'bom-generator',desc:'从 Creo PDF 图纸生成 BOM 物料清单。',tags:['Python','BOM'],url:'https://github.com/HAAAAe1/bom-generator'}
 ];
 let pcIdx=0;
+function pcSlideHtml(p){
+  const stats=p.stars!==undefined?`<div class="pc-meta">⭐ ${p.stars}　🍴 ${p.forks}　更新 ${p.updated||''}</div>`:'';
+  const tags=[...new Set([...(p.tags||[]),...(p.topics||[])])].slice(0,6);
+  return `<div class="pc-slide">
+    <a href="${p.url}" target="_blank"><img class="pc-img" src="https://opengraph.githubassets.com/1/HAAAAe1/${p.name}" loading="lazy" onerror="this.style.display='none'"></a>
+    <div class="pc-name">${p.name}</div>
+    <div class="pc-desc">${p.desc}</div>${stats}
+    <div class="pc-tags">${tags.map(t=>`<span class="project-tag">${t}</span>`).join('')}</div>
+    <a class="pc-link" href="${p.url}" target="_blank">在 GitHub 查看 →</a>
+  </div>`;
+}
 function pcRender(){
-  document.getElementById('pcTrack').innerHTML=PROJECTS.map(p=>
-    `<div class="pc-slide"><div class="pc-name">${p.name}</div><div class="pc-desc">${p.desc}</div><div class="pc-tags">${p.tags.map(t=>`<span class="project-tag">${t}</span>`).join('')}</div><a class="pc-link" href="${p.url}" target="_blank">GitHub →</a></div>`
-  ).join('');
+  document.getElementById('pcTrack').innerHTML=PROJECTS.map(pcSlideHtml).join('');
+}
+// live stats from GitHub API, cached 1h in localStorage
+async function pcLoadStats(){
+  try{
+    let data=null;
+    const cached=JSON.parse(localStorage.getItem('pc_stats')||'null');
+    if(cached&&Date.now()-cached.t<3600e3)data=cached.d;
+    else{
+      const res=await fetch('https://api.github.com/users/HAAAAe1/repos?per_page=100&sort=updated');
+      if(res.ok){data=await res.json();localStorage.setItem('pc_stats',JSON.stringify({t:Date.now(),d:data}))}
+    }
+    if(!data)return;
+    data.forEach(r=>{
+      const p=PROJECTS.find(x=>x.name===r.name);if(!p)return;
+      p.stars=r.stargazers_count;p.forks=r.forks_count;p.topics=r.topics||[];
+      p.desc=r.description||p.desc;p.updated=(r.pushed_at||'').slice(0,10);
+    });
+    pcRender();pcApply();
+  }catch(e){/* offline / rate-limited: static cards still work */}
 }
 function pcMove(d){pcIdx=(pcIdx+d+PROJECTS.length)%PROJECTS.length;pcApply()}
 function pcApply(){
   document.getElementById('pcTrack').style.transform=`translateX(-${pcIdx*100}%)`;
   document.getElementById('pcIdx').textContent=`${pcIdx+1} / ${PROJECTS.length}`;
 }
+// pointer-drag swipe (mouse or touch), snap on release
+function pcBind(){
+  const vp=document.querySelector('.pc-viewport'),track=document.getElementById('pcTrack');
+  let st=null,moved=false;
+  vp.addEventListener('pointerdown',e=>{st={x:e.clientX,dx:0};moved=false;track.style.transition='none';vp.setPointerCapture(e.pointerId)});
+  vp.addEventListener('pointermove',e=>{
+    if(!st)return;
+    st.dx=e.clientX-st.x;
+    if(Math.abs(st.dx)>8)moved=true;
+    track.style.transform=`translateX(calc(${-pcIdx*100}% + ${st.dx}px))`;
+  });
+  const end=()=>{
+    if(!st)return;
+    const dx=st.dx;st=null;track.style.transition='';
+    if(dx<-50)pcIdx=(pcIdx+1)%PROJECTS.length;
+    else if(dx>50)pcIdx=(pcIdx-1+PROJECTS.length)%PROJECTS.length;
+    pcApply();
+  };
+  vp.addEventListener('pointerup',end);vp.addEventListener('pointercancel',end);
+  vp.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true);
+}
 
 // ── INIT ──
 updateAuthUI();
-pcRender();pcApply();
+pcRender();pcApply();pcBind();pcLoadStats();
 loadFeed();
 </script>
 </body>

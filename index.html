@@ -367,17 +367,17 @@ async function loadFeed(){
         const imgParts=parts[1].split('---FILES---');
         images=imgParts[0].trim().split('\n').filter(l=>l.startsWith('![')).map(l=>{
           const m=l.match(/!\[.*?\]\((.*?)\)/);return m?m[1]:null;
-        }).filter(Boolean);
+        }).filter(u=>u&&(/^(https:\/\/|data:image\/)/.test(u)));
         if(imgParts[1]){
           files=imgParts[1].trim().split('\n').filter(l=>l.startsWith('- [')).map(l=>{
             const m=l.match(/- \[(.*?)\]\((.*?)\)/);return m?{name:m[1],url:m[2]}:null;
-          }).filter(Boolean);
+          }).filter(f=>f&&/^https:\/\//.test(f.url));
         }
       }
       const d=new Date(iss.created_at);
       const ts=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-      const imgsHtml=images.map(s=>`<img src="${s}" onclick="showImg('${s}')">`).join('');
-      const filesHtml=files.map(f=>`<a class="feed-file" href="${f.url}" target="_blank">📄 ${f.name}</a>`).join('');
+      const imgsHtml=images.map(s=>`<img src="${esc(s)}" onclick="showImg(this.src)">`).join('');
+      const filesHtml=files.map(f=>`<a class="feed-file" href="${esc(f.url)}" target="_blank">📄 ${esc(f.name)}</a>`).join('');
       const isOwner=token&&iss.user.login==='HAAAAe1';
       const actions=isOwner?`
         <div class="feed-actions">

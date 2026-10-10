@@ -94,6 +94,24 @@ a:hover{text-decoration:underline}
 /* PROJECTS */
 .project-card{background:var(--bg);border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-bottom:16px;transition:box-shadow .2s}
 @media(min-width:1000px){#page-projects.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}#page-projects.active h2{grid-column:1/-1}#page-projects.active .project-card{margin-bottom:0}}
+
+/* RIGHT RAIL - project carousel */
+.rail{display:none;flex:0 0 300px;padding:24px 24px 24px 0}
+@media(min-width:1500px){.rail{display:block}}
+.rail-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.rail-title{font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;margin-bottom:12px}
+.pc-viewport{overflow:hidden;border-radius:8px}
+.pc-track{display:flex;transition:transform .35s ease}
+.pc-slide{flex:0 0 100%;padding:2px 2px 6px}
+.pc-name{font-weight:700;font-size:15px;margin-bottom:6px;word-break:break-all}
+.pc-desc{font-size:13px;color:var(--text2);line-height:1.6;min-height:64px}
+.pc-tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.pc-link{display:inline-block;margin-top:12px;font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
+.pc-link:hover{text-decoration:underline}
+.pc-nav{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.pc-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;color:var(--text2);line-height:1;transition:all .2s}
+.pc-nav button:hover{border-color:var(--accent);color:var(--accent)}
+.pc-idx{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
 .project-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .project-name{font-size:16px;font-weight:700;margin-bottom:4px}
 .project-desc{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
@@ -274,6 +292,17 @@ a:hover{text-decoration:underline}
   </div>
 
 </div>
+<aside class="rail">
+  <div class="rail-card">
+    <div class="rail-title">项目</div>
+    <div class="pc-viewport"><div class="pc-track" id="pcTrack"></div></div>
+    <div class="pc-nav">
+      <button onclick="pcMove(-1)" aria-label="上一个">‹</button>
+      <span class="pc-idx" id="pcIdx"></span>
+      <button onclick="pcMove(1)" aria-label="下一个">›</button>
+    </div>
+  </div>
+</aside>
 </div>
 
 <!-- EDIT MODAL -->
@@ -530,8 +559,34 @@ function toggleSidebar(){
   document.getElementById('overlay').classList.toggle('show');
 }
 
+// ── RIGHT RAIL: project carousel ──
+const PROJECTS=[
+ {name:'haaaae1.github.io',desc:'「Hi, camera」个人博客，本站的在线源码。',tags:['HTML','GitHub Pages'],url:'https://github.com/HAAAAe1/haaaae1.github.io'},
+ {name:'happy',desc:'工作区同步仓库。双机环境下的配置、记忆、脚本同步。',tags:['JavaScript','Git'],url:'https://github.com/HAAAAe1/happy'},
+ {name:'creo-balloon',desc:'Creo 工程图气泡序号插件（TOOLKIT）：自动递增/插入/重排球标，支持 Creo 6.0-12.0。',tags:['C','Creo'],url:'https://github.com/HAAAAe1/creo-balloon'},
+ {name:'maodie-slot-machine',desc:'耄耋机大冒险 Roguelike。10 Boss、18 事件、16 诅咒。',tags:['JavaScript','Roguelike'],url:'https://github.com/HAAAAe1/maodie-slot-machine'},
+ {name:'guardian',desc:'摄像头人物检测 + 窗口自动隐藏：检测到多人自动最小化指定窗口，人走后自动恢复。',tags:['Python','YOLO'],url:'https://github.com/HAAAAe1/guardian'},
+ {name:'novel-reader',desc:'轻量级 EPUB 阅读器，专为摸鱼设计。',tags:['Python','EPUB'],url:'https://github.com/HAAAAe1/novel-reader'},
+ {name:'MyPlugins',desc:'FF14 Dalamud 个人插件仓库。',tags:['C#','FF14'],url:'https://github.com/HAAAAe1/MyPlugins'},
+ {name:'roll_maodie',desc:'今日耄耋插件：187 种耄耋表情每日抽取 + 图鉴收集系统。',tags:['JavaScript','QQ Bot'],url:'https://github.com/HAAAAe1/roll_maodie'},
+ {name:'bom-generator-tool',desc:'Creo PDF 图纸转 BOM 物料清单工具。',tags:['Python','BOM'],url:'https://github.com/HAAAAe1/bom-generator-tool'},
+ {name:'bom-generator',desc:'从 Creo PDF 图纸生成 BOM 物料清单。',tags:['Python','BOM'],url:'https://github.com/HAAAAe1/bom-generator'}
+];
+let pcIdx=0;
+function pcRender(){
+  document.getElementById('pcTrack').innerHTML=PROJECTS.map(p=>
+    `<div class="pc-slide"><div class="pc-name">${p.name}</div><div class="pc-desc">${p.desc}</div><div class="pc-tags">${p.tags.map(t=>`<span class="project-tag">${t}</span>`).join('')}</div><a class="pc-link" href="${p.url}" target="_blank">GitHub →</a></div>`
+  ).join('');
+}
+function pcMove(d){pcIdx=(pcIdx+d+PROJECTS.length)%PROJECTS.length;pcApply()}
+function pcApply(){
+  document.getElementById('pcTrack').style.transform=`translateX(-${pcIdx*100}%)`;
+  document.getElementById('pcIdx').textContent=`${pcIdx+1} / ${PROJECTS.length}`;
+}
+
 // ── INIT ──
 updateAuthUI();
+pcRender();pcApply();
 loadFeed();
 </script>
 </body>

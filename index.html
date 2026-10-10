@@ -489,11 +489,26 @@ async function saveEdit(){
   }catch(e){alert('保存失败: '+e.message)}
 }
 
-// ── DELETE (real, irreversible) ──
+// ── DELETE (GitHub has no issue-delete API; scrub content + close) ──
 async function deletePost(num){
-  if(!confirm('确定删除？物理删除，不可恢复！'))return;
+  if(!confirm('确定删除？内容将被清空且不可恢复！'))return;
   try{
-    await api(`/repos/${REPO}/issues/${num}`,{method:'DELETE'});
+    const iss=await api(`/repos/${REPO}/issues/${num}`);
+    const urls=(iss.body||'').match(/https:\/\/raw\.githubusercontent\.com\/[^)\s]+/g)||[];
+    for(const u of urls){
+      const path=u.split('/main/')[1];
+      if(path&&path.startsWith('uploads/')){
+        try{
+          const m=await api(`/repos/${REPO}/contents/${encodeURIComponent(path)}`);
+          await api(`/repos/${REPO}/contents/${encodeURIComponent(path)}`,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'remove blog asset: '+path,sha:m.sha})});
+        }catch(_){}
+      }
+    }
+    await api(`/repos/${REPO}/issues/${num}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title:'[deleted]',body:'',state:'closed',labels:[]})
+    });
     loadFeed();
   }catch(e){alert('删除失败: '+e.message)}
 }

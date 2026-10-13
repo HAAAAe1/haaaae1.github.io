@@ -397,6 +397,7 @@ body.dbgon #vhDebug{display:block}
     <a href="#" data-page="gallery" onclick="switchPage('gallery',this)">🖼️ 图库</a>
     <a href="#" data-page="files" onclick="switchPage('files',this)">📎 文件</a>
     <a href="#" data-page="bookmarks" onclick="switchPage('bookmarks',this)">🔗 收藏</a>
+    <a href="#" data-page="guest" onclick="switchPage('guest',this)">💬 留言</a>
     <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
   </nav>
   <div class="sidebar-foot">
@@ -551,6 +552,19 @@ body.dbgon #vhDebug{display:block}
         <a class="about-link" href="https://github.com/HAAAAe1" target="_blank">GitHub</a>
       </div>
     </div>
+  </div>
+
+  <!-- 留言板 -->
+  <div class="page" id="page-guest">
+    <div class="page-title">💬 留言板</div>
+    <div class="page-sub">想说什么都可以，随便聊。留言需要登录 GitHub 账号，所有人的留言都在同一条帖子里。</div>
+    <div class="cm-hint" style="margin-bottom:14px">
+      <b>怎么留言</b><br>
+      · 点下面的 <b>Sign in with GitHub</b> 授权一下，就能直接写<br>
+      · 留言是公开的，会存到本站仓库的 Discussions 里，删改由你自己控制<br>
+      · 只想单独找我，用左下角菜单里的 <b>✉️ 联系我</b>
+    </div>
+    <div id="guestBox"></div>
   </div>
 
 </div>
@@ -895,6 +909,7 @@ function switchPage(name,el){
   document.querySelectorAll('.sidebar nav a').forEach(a=>a.classList.remove('active'));
   if(el)el.classList.add('active');
   if(window.innerWidth<=768)toggleSidebar();
+  if(name==='guest')mountGuestbook();   // 留言板首次进入才挂 iframe
   window.scrollTo(0,0);
 }
 function toggleRail(){document.body.classList.toggle('rail-open')}
@@ -923,9 +938,9 @@ function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
   try{localStorage.setItem('theme',t)}catch(_){}
   updateThemeBtn();
-  // 已经加载出来的 giscus 也要跟着换色，不然深色页里嵌一块白框
+  // 已经加载出来的 giscus 也要跟着换色，不然深色页里嵌一块白框（动态评论 + 留言板都算）
   const th=t==='dark'?'dark':'light';
-  document.querySelectorAll('.comments iframe.giscus-frame').forEach(f=>{
+  document.querySelectorAll('iframe.giscus-frame').forEach(f=>{
     try{f.contentWindow.postMessage({giscus:{setConfig:{theme:th}}},'https://giscus.app')}catch(_){}
   });
 }
@@ -1262,8 +1277,8 @@ function giscusWidgetSrc(term){
   });
   return GISCUS_ORIGIN+'/'+GISCUS.lang+'/widget?'+q.toString();
 }
-function mountGiscus(box,num){
-  const term='blog-'+num;
+// 一个 term 对应一个 discussion：动态用 blog-<编号>，留言板用固定的 'guestbook'
+function mountGiscus(box,term){
   const f=document.createElement('iframe');
   f.className='giscus-frame giscus-frame--loading';
   f.title='Comments';
@@ -1274,6 +1289,22 @@ function mountGiscus(box,num){
   f.style.opacity='0';
   f.addEventListener('load',()=>{f.style.removeProperty('opacity');f.classList.remove('giscus-frame--loading')});
   box.appendChild(f);
+}
+// 留言板：整页共用一条 discussion（term 固定为 guestbook），所以是「留言板」而不是每条一帖。
+// 第一次切到这一页才加载 iframe，没人看就不发请求。
+const GUEST_TERM='guestbook';
+function mountGuestbook(){
+  const box=document.getElementById('guestBox');
+  if(!box||box.dataset.loaded)return;
+  if(!GISCUS.repoId||!GISCUS.categoryId){
+    const miss=[];
+    if(!GISCUS.repoId)miss.push('<code>repoId</code>');
+    if(!GISCUS.categoryId)miss.push('<code>categoryId</code>');
+    box.innerHTML='<div class="cm-hint">留言板还差 '+miss.length+' 个配置：'+miss.join(' 和 ')+'。</div>';
+    return;
+  }
+  box.dataset.loaded='1';
+  mountGiscus(box,GUEST_TERM);
 }
 function toggleComments(num,btn){
   const box=document.getElementById('cm-'+num);
@@ -1289,7 +1320,7 @@ function toggleComments(num,btn){
     box.innerHTML='<div class="cm-hint">评论功能还差 '+miss.length+' 个配置：'+miss.join(' 和 ')+'。<br>打开 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a>，用 GitHub 账号授权，仓库填 <code>'+GISCUS.repo+'</code>、分类选 <b>'+GISCUS.category+'</b>，它会直接生成这两串 id，填进源码顶部的 <code>GISCUS</code> 配置即可生效。<br><span style="color:var(--text3)">本仓库的 Discussions 已启用，这一步无需再操作。每条动态按编号独立成帖，当前这条是 #'+num+'。</span></div>';
     return;
   }
-  mountGiscus(box,num);
+  mountGiscus(box,'blog-'+num);
 }
 
 // ── 评论条数：不展开也能看到 ──

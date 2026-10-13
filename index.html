@@ -235,6 +235,8 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
 .side-act:hover{color:var(--accent);border-color:var(--accent)}
 .side-act kbd{margin-left:auto;font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+/* 移动端不需要给「回到顶部」留位（抽屉关闭时按钮浮在内容上，抽屉打开时按钮隐藏） */
+@media(max-width:768px){.sidebar-foot{padding-bottom:0}}
 kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 
 /* ══ PAGE TITLE ══ */
@@ -323,6 +325,8 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
   opacity:0;visibility:hidden;transform:translateY(10px);
   transition:opacity .25s,transform .25s,visibility .25s,color .2s,border-color .2s}
 .to-top.show{opacity:1;visibility:visible;transform:none}
+/* 移动端抽屉打开时隐藏（菜单盖在上面，滚动按钮不该压着菜单） */
+body.sb-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
 .to-top:hover{color:var(--accent);border-color:var(--accent)}
 .to-top svg{width:18px;height:18px;display:block}
 
@@ -836,6 +840,7 @@ function toggleRail(){document.body.classList.toggle('rail-open')}
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
+  document.body.classList.toggle('sb-open');   // 抽屉打开时隐藏「回到顶部」，避免浮在抽屉上
 }
 function goPage(name){
   switchPage(name,document.querySelector(`.sidebar nav a[data-page="${name}"]`));

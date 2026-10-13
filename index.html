@@ -362,7 +362,10 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
   /* 抽屉的白底与灰色遮罩都往下多铺「整整一屏」。
      两者都是纯绘制层（::after 不占布局，遮罩里没有内容），加多少都不影响抽屉里的按钮位置；
      手机浏览器收起工具栏、或整体平移渲染时，下面那条没被染色的缝无论多大都能盖住。 */
-  .sidebar::after{content:'';position:absolute;left:0;right:0;top:100%;height:100vh;background:var(--bg);border-right:1px solid var(--border)}
+  /* 宽度要写 calc(100% + 1px)：抽屉是 box-sizing:border-box 的 220px 含 1px 右边框，
+     绝对定位的基准是 padding box（219px），照搬 left:0;right:0 会白底窄 1px、线也错开 1px。
+     加回这 1px 后，延伸段的边框正好压在本体右边框的同一列上。 */
+  .sidebar::after{content:'';position:absolute;left:0;width:calc(100% + 1px);top:100%;height:100vh;background:var(--bg);border-right:1px solid var(--border)}
   .overlay{top:0;bottom:auto;height:200vh}
 }
 

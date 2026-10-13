@@ -345,6 +345,19 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .contact-acts .primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .contact-acts .primary:hover{color:var(--on-accent);opacity:.88}
 
+/* ══ 手机端：抽屉 / 遮罩跟随「真实可视高度」══
+   手机浏览器滑动收起地址栏+工具栏时会改变可视高度，抽屉和遮罩用的是
+   position:fixed + top:0;bottom:0 / inset:0，部分内核（QQ、UC 的 X5）不会跟着重排，
+   于是抽屉底部落后一截，露出没被盖住的空白条（看起来就像分辨率错乱）。
+   改法：不再用 top/bottom 撑高，改用 JS 实时写入的 --vh（取 visualViewport.height，
+   取不到退回 innerHeight）给显式高度；再给抽屉补一条向下延伸的同色背景，
+   就算测量慢一帧，露出来的也是抽屉自己的底色，不会是一块突兀的空白。 */
+@media(max-width:768px){
+  .sidebar{top:0;bottom:auto;height:var(--vh,100vh)}
+  .sidebar::after{content:'';position:absolute;left:0;right:0;top:100%;height:160px;background:var(--bg);border-right:1px solid var(--border)}
+  .overlay{top:0;bottom:auto;height:var(--vh,100vh)}
+}
+
 /* ══ FLASH HIGHLIGHT ══ */
 @keyframes flashbg{0%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}100%{border-color:var(--border);box-shadow:none}}
 .flash{animation:flashbg 1.6s ease-out}
@@ -1086,6 +1099,26 @@ async function loadWeather(force){
   }
   cwBusy=false;
 }
+
+// ══ 手机端视口高度同步（--vh）══
+// 手机浏览器收起/展开地址栏与工具栏会改变可视高度。--vh 存的是「此刻真正看得到的高度」，
+// 抽屉和遮罩按它定高，工具栏动画时就不会露出一条没被盖住的空白。
+// 用 visualViewport 优先（它就是当前可视区域），退回 innerHeight；两者变化都监听到。
+(function(){
+  const root=document.documentElement;
+  const vv=window.visualViewport;
+  function syncVH(){
+    const h=Math.round((vv&&vv.height)||window.innerHeight||0);
+    if(h>0)root.style.setProperty('--vh',h+'px');
+  }
+  syncVH();
+  window.addEventListener('resize',syncVH,{passive:true});
+  window.addEventListener('orientationchange',syncVH,{passive:true});
+  if(vv){
+    vv.addEventListener('resize',syncVH,{passive:true});
+    vv.addEventListener('scroll',syncVH,{passive:true});
+  }
+})();
 
 // ══ 回到顶部（桌面端在侧栏底部，手机端是右下角悬浮按钮）══
 function scrollToTop(){

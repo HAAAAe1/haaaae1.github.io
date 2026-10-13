@@ -320,15 +320,16 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
 .giscus-frame--loading{opacity:0}
 
 /* ══ 回到顶部（手机端右下角悬浮，桌面端收进侧栏底部）══ */
-.to-top{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border-radius:50%;padding:0;
+/* bottom:82px —— 让开右下角的头像圆圈 .rail-fab(52px + 16px 边距)，否则被它压住点不到 */
+.to-top{position:fixed;right:18px;bottom:82px;width:42px;height:42px;border-radius:50%;padding:0;
   display:flex;align-items:center;justify-content:center;
   border:1px solid var(--border);background:var(--bg);color:var(--text2);
   cursor:pointer;z-index:120;box-shadow:var(--fab-shadow);
   opacity:0;visibility:hidden;transform:translateY(10px);
   transition:opacity .25s,transform .25s,visibility .25s,color .2s,border-color .2s}
 .to-top.show{opacity:1;visibility:visible;transform:none}
-/* 抽屉打开时隐藏（菜单盖在上面，滚动按钮不该压着菜单） */
-body.sb-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
+/* 抽屉 / 个人信息卡打开时隐藏（盖在上面，滚动按钮不该压着它们） */
+body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
 .to-top:hover{color:var(--accent);border-color:var(--accent)}
 .to-top svg{width:18px;height:18px;display:block}
 /* 桌面端侧栏底部已有「回到顶部」，浮动按钮不再出现 */

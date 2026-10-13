@@ -231,12 +231,10 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 
 /* ══ SIDEBAR FOOT (search + theme) ══ */
 .sidebar nav{flex:1;overflow-y:auto}
-.sidebar-foot{margin-top:auto;padding:16px 16px 46px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.sidebar-foot{margin-top:auto;padding:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
 .side-act:hover{color:var(--accent);border-color:var(--accent)}
 .side-act kbd{margin-left:auto;font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
-/* 移动端不需要给「回到顶部」留位（抽屉关闭时按钮浮在内容上，抽屉打开时按钮隐藏） */
-@media(max-width:768px){.sidebar-foot{padding-bottom:0}}
 kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
 
 /* ══ PAGE TITLE ══ */
@@ -317,18 +315,34 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
 .giscus-frame{display:block;width:100%;min-height:150px;border:none;color-scheme:light dark}
 .giscus-frame--loading{opacity:0}
 
-/* ══ 回到顶部（左下角悬浮）══ */
-.to-top{position:fixed;left:18px;bottom:18px;width:42px;height:42px;border-radius:50%;padding:0;
+/* ══ 回到顶部（手机端右下角悬浮，桌面端收进侧栏底部）══ */
+.to-top{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border-radius:50%;padding:0;
   display:flex;align-items:center;justify-content:center;
   border:1px solid var(--border);background:var(--bg);color:var(--text2);
   cursor:pointer;z-index:120;box-shadow:var(--fab-shadow);
   opacity:0;visibility:hidden;transform:translateY(10px);
   transition:opacity .25s,transform .25s,visibility .25s,color .2s,border-color .2s}
 .to-top.show{opacity:1;visibility:visible;transform:none}
-/* 移动端抽屉打开时隐藏（菜单盖在上面，滚动按钮不该压着菜单） */
+/* 抽屉打开时隐藏（菜单盖在上面，滚动按钮不该压着菜单） */
 body.sb-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
 .to-top:hover{color:var(--accent);border-color:var(--accent)}
 .to-top svg{width:18px;height:18px;display:block}
+/* 桌面端侧栏底部已有「回到顶部」，浮动按钮不再出现 */
+@media(min-width:769px){.to-top{display:none}}
+
+/* ══ 联系我 ══ */
+.contact-modal{display:none;position:fixed;inset:0;background:var(--dim);z-index:620;align-items:center;justify-content:center;padding:20px}
+.contact-modal.show{display:flex}
+.contact-card{width:100%;max-width:330px;background:var(--bg);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);padding:22px 20px;text-align:center}
+.contact-card h3{margin:0 0 8px;font-size:15px;font-weight:700}
+.contact-card p{margin:0 0 16px;font-size:12.5px;line-height:1.75;color:var(--text3)}
+.contact-mail{display:flex;align-items:center;gap:8px;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;text-align:left}
+.contact-mail span{flex:1;min-width:0;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;user-select:all}
+.contact-acts{display:flex;gap:8px}
+.contact-acts button,.contact-acts a{flex:1;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;text-decoration:none;text-align:center;transition:all .2s}
+.contact-acts button:hover,.contact-acts a:hover{color:var(--accent);border-color:var(--accent);text-decoration:none}
+.contact-acts .primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.contact-acts .primary:hover{color:var(--on-accent);opacity:.88}
 
 /* ══ FLASH HIGHLIGHT ══ */
 @keyframes flashbg{0%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}100%{border-color:var(--border);box-shadow:none}}
@@ -359,6 +373,8 @@ body.sb-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
   <div class="sidebar-foot">
     <button class="side-act" onclick="openSearch()">🔍 搜索<kbd>Ctrl K</kbd></button>
     <button class="side-act" id="themeBtn" onclick="toggleTheme()">🌙 深色模式</button>
+    <button class="side-act" onclick="sideToTop()">⬆️ 回到顶部</button>
+    <button class="side-act" onclick="openContact()">✉️ 联系我</button>
   </div>
 </aside>
 
@@ -553,6 +569,19 @@ body.sb-open .to-top{opacity:0;visibility:hidden;transform:translateY(10px)}
 <!-- IMAGE MODAL -->
 <div class="img-modal" id="imgModal" onclick="this.classList.remove('show')">
   <img id="imgModalImg" src="">
+</div>
+
+<!-- CONTACT -->
+<div class="contact-modal" id="contactModal" onclick="if(event.target===this)closeContact()">
+  <div class="contact-card">
+    <h3>✉️ 联系我</h3>
+    <p>有问题、想交流，或者只是想打个招呼，随时发邮件给我。</p>
+    <div class="contact-mail"><span id="contactMail">1119332334@qq.com</span></div>
+    <div class="contact-acts">
+      <a class="primary" id="contactSend" href="mailto:1119332334@qq.com">发送邮件</a>
+      <button id="contactCopy" onclick="copyMail()">复制邮箱</button>
+    </div>
+  </div>
 </div>
 
 <!-- SEARCH -->
@@ -1057,10 +1086,15 @@ async function loadWeather(force){
   cwBusy=false;
 }
 
-// ══ 回到顶部（左下角）══
+// ══ 回到顶部（桌面端在侧栏底部，手机端是右下角悬浮按钮）══
 function scrollToTop(){
   const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+}
+// 侧栏里的「回到顶部」：手机上顺手把抽屉收起来
+function sideToTop(){
+  scrollToTop();
+  if(document.body.classList.contains('sb-open'))toggleSidebar();
 }
 (function(){
   const btn=document.getElementById('toTop');
@@ -1074,6 +1108,49 @@ function scrollToTop(){
   window.addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
   upd();
 })();
+
+// ══ 联系我 ══
+const CONTACT_MAIL='1119332334@qq.com';
+function openContact(){
+  if(document.body.classList.contains('sb-open'))toggleSidebar();  // 手机上先收起抽屉，弹窗才看得清
+  const m=document.getElementById('contactModal');
+  if(m)m.classList.add('show');
+}
+function closeContact(){
+  const m=document.getElementById('contactModal');
+  if(m)m.classList.remove('show');
+}
+function copyMail(){
+  const btn=document.getElementById('contactCopy');
+  const done=()=>{
+    if(!btn)return;
+    const t=btn.textContent;
+    btn.textContent='✓ 已复制';
+    setTimeout(()=>{btn.textContent=t},1600);
+  };
+  const manual=()=>{ // 连 execCommand 都不行时，至少把邮箱选中，方便手动复制
+    const el=document.getElementById('contactMail');
+    if(!el||!window.getSelection)return;
+    const r=document.createRange();r.selectNodeContents(el);
+    const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+  };
+  const legacy=()=>{
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=CONTACT_MAIL;
+      ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();ta.setSelectionRange(0,ta.value.length);
+      const ok=document.execCommand('copy');
+      document.body.removeChild(ta);
+      ok?done():manual();
+    }catch(_){manual()}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext){
+    navigator.clipboard.writeText(CONTACT_MAIL).then(done).catch(legacy);
+  }else legacy();
+}
 
 // ══ GISCUS ══
 // repoId / categoryId 已填好，评论直接可用。
@@ -1316,6 +1393,7 @@ if(sInp)sInp.addEventListener('input',e=>doSearch(e.target.value));
 
 // 快捷键：Ctrl/Cmd+K 开关搜索，Esc 关闭，↑↓ 选择，回车打开
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.getElementById('contactModal').classList.contains('show')){e.preventDefault();closeContact();return}
   const open=document.getElementById('searchOverlay').classList.contains('show');
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open?closeSearch():openSearch();return}
   if(!open)return;

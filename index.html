@@ -647,7 +647,7 @@ function feedItemHTML(it){
         ${imgsHtml?`<div class="feed-images">${imgsHtml}</div>`:''}
         ${filesHtml?`<div class="feed-files">${filesHtml}</div>`:''}
         <div class="feed-actions">${ownerActions}
-          <button class="feed-action" onclick="toggleComments(${it.num},this)">💬 评论</button>
+          <button class="feed-action" data-cm onclick="toggleComments(${it.num},this)">💬 评论</button>
         </div>
         <div class="comments" id="cm-${it.num}"></div>
       </div>`;
@@ -669,7 +669,7 @@ async function loadFeed(){
     const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=open&sort=created&direction=desc&per_page=50`);
     FEED=issues.map(parseIssue);
     el.innerHTML=FEED.length?FEED.map(feedItemHTML).join(''):'<div class="feed-empty">还没有动态</div>';
-    renderStats();renderGallery();renderFiles();buildSearchIndex();
+    renderStats();renderGallery();renderFiles();buildSearchIndex();applyCommentCounts();loadCommentCounts();
   }catch(e){
     let msg;
     if(e.message.startsWith('403')){
@@ -969,12 +969,66 @@ function toggleComments(num,btn){
   s.setAttribute('data-mapping','specific');
   s.setAttribute('data-term','blog-'+num);
   s.setAttribute('data-reactions-enabled','1');
-  s.setAttribute('data-emit-metadata','0');
+  s.setAttribute('data-emit-metadata','1');
   s.setAttribute('data-input-position','top');
   s.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light');
   s.setAttribute('data-lang','zh-CN');
   box.appendChild(s);
 }
+
+// ── 评论条数：不展开也能看到 ──
+// giscus 每条动态对应一个标题为 blog-<编号> 的 discussion，
+// 所以直接读仓库的 discussions 列表即可拿到条数，不用把 50 个 iframe 都加载出来。
+let COMMENT_COUNTS=null, ccFetching=false;
+function setCommentCount(num,n){
+  COMMENT_COUNTS=COMMENT_COUNTS||{};
+  COMMENT_COUNTS['blog-'+num]=n;
+  const item=document.querySelector(`.feed-item[data-num="${num}"]`);
+  const btn=item&&item.querySelector('.feed-action[data-cm]');
+  if(btn){btn.textContent='💬 评论 '+n;btn.title=n+' 条评论（点击展开）'}
+}
+function applyCommentCounts(){
+  if(!COMMENT_COUNTS)return;
+  document.querySelectorAll('.feed-item').forEach(item=>{
+    setCommentCount(item.dataset.num,COMMENT_COUNTS['blog-'+item.dataset.num]||0);
+  });
+}
+async function loadCommentCounts(){
+  if(COMMENT_COUNTS||ccFetching)return;
+  ccFetching=true;
+  try{
+    // 匿名访客每小时只有 60 次额度，同一标签页内 3 分钟复用一次结果
+    const c=JSON.parse(sessionStorage.getItem('cc_cache')||'null');
+    if(c&&c.m&&Date.now()-c.t<180000){COMMENT_COUNTS=c.m;return}
+  }catch(_){}
+  const m={};
+  try{
+    for(let p=1;p<=5;p++){
+      const list=await api(`/repos/${REPO}/discussions?per_page=100&page=${p}`);
+      if(!Array.isArray(list)||!list.length)break;
+      list.forEach(d=>{if(d.title)m[d.title]=d.comments||0});
+      if(list.length<100)break;
+    }
+    COMMENT_COUNTS=m;
+    try{sessionStorage.setItem('cc_cache',JSON.stringify({t:Date.now(),m}))}catch(_){}
+  }catch(_){
+    COMMENT_COUNTS={};   // 拿不到就算了，不重试、不影响其他功能
+  }finally{
+    ccFetching=false;
+    applyCommentCounts();
+  }
+}
+// 展开评论后 giscus 会推送讨论元数据（需要 data-emit-metadata="1"），
+// 用它把刚发的评论立刻反映到按钮上，不必等下次刷新。
+window.addEventListener('message',e=>{
+  if(e.origin!=='https://giscus.app')return;
+  const g=e.data&&e.data.giscus;
+  if(!g||!g.discussion||typeof g.discussion.totalCommentCount!=='number')return;
+  document.querySelectorAll('.comments').forEach(box=>{
+    const f=box.querySelector('iframe.giscus-frame');
+    if(f&&f.contentWindow===e.source)setCommentCount(box.id.replace('cm-',''),g.discussion.totalCommentCount);
+  });
+});
 
 // ── RIGHT RAIL: project carousel ──
 const PROJECTS=[

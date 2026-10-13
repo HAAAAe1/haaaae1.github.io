@@ -35,6 +35,7 @@
   --border:#e5e7eb;--radius:12px;
   --hover-shadow:0 2px 12px rgba(0,0,0,.06);
   --shadow-lg:0 16px 48px rgba(0,0,0,.28);
+  --fab-shadow:0 4px 14px rgba(0,0,0,.16);
   --dim:rgba(0,0,0,.45);
   --scroll:rgba(0,0,0,.22);
   --c-doc-bg:#fdeceb;--c-doc-fg:#c0392b;
@@ -50,6 +51,7 @@ html[data-theme=dark]{
   --border:#464d5e;
   --hover-shadow:0 2px 14px rgba(0,0,0,.55);
   --shadow-lg:0 16px 48px rgba(0,0,0,.65);
+  --fab-shadow:0 4px 16px rgba(0,0,0,.6);
   --dim:rgba(0,0,0,.72);
   --scroll:rgba(255,255,255,.3);
   --c-doc-bg:#3a2320;--c-doc-fg:#e8796a;
@@ -165,6 +167,12 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .clock-box{text-align:right;flex:0 0 auto}
 .clock-time{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .clock-date{font-size:11px;color:var(--text3);margin-top:2px}
+.clock-weather{font-size:11px;color:var(--text2);margin-top:4px;display:flex;gap:5px;justify-content:flex-end;align-items:baseline;white-space:nowrap;cursor:pointer}
+.clock-weather:hover{color:var(--accent)}
+.clock-weather .cw-city{color:var(--text3)}
+.clock-weather .cw-temp{font-weight:700;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}
+.clock-weather.cw-fail{color:var(--text3);font-weight:400}
+.clock-weather.cw-fail:hover{color:var(--accent)}
 .stat-row{display:flex;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px solid var(--border)}
 .stat-row div{text-align:center;flex:1}
 .stat-row b{font-size:12px;font-variant-numeric:tabular-nums}
@@ -223,7 +231,7 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 
 /* ══ SIDEBAR FOOT (search + theme) ══ */
 .sidebar nav{flex:1;overflow-y:auto}
-.sidebar-foot{margin-top:auto;padding:16px 16px 0;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.sidebar-foot{margin-top:auto;padding:16px 16px 46px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
 .side-act:hover{color:var(--accent);border-color:var(--accent)}
 .side-act kbd{margin-left:auto;font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
@@ -307,6 +315,17 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
 .giscus-frame{display:block;width:100%;min-height:150px;border:none;color-scheme:light dark}
 .giscus-frame--loading{opacity:0}
 
+/* ══ 回到顶部（左下角悬浮）══ */
+.to-top{position:fixed;left:18px;bottom:18px;width:42px;height:42px;border-radius:50%;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--bg);color:var(--text2);
+  cursor:pointer;z-index:120;box-shadow:var(--fab-shadow);
+  opacity:0;visibility:hidden;transform:translateY(10px);
+  transition:opacity .25s,transform .25s,visibility .25s,color .2s,border-color .2s}
+.to-top.show{opacity:1;visibility:visible;transform:none}
+.to-top:hover{color:var(--accent);border-color:var(--accent)}
+.to-top svg{width:18px;height:18px;display:block}
+
 /* ══ FLASH HIGHLIGHT ══ */
 @keyframes flashbg{0%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}100%{border-color:var(--border);box-shadow:none}}
 .flash{animation:flashbg 1.6s ease-out}
@@ -317,6 +336,10 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
 
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<button class="to-top" id="toTop" onclick="scrollToTop()" aria-label="回到顶部" title="回到顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>
+</button>
 
 <div class="app">
 <aside class="sidebar" id="sidebar">
@@ -491,7 +514,7 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
         <div class="pf-top"><img class="pf-avatar" src="avatar.png" alt="avatar"><div><div class="pf-name">CA</div><div class="pf-login">HAAAAe1</div></div></div>
         <div class="pf-bio">只是用ai生成些自己用的东西</div>
       </div>
-      <div class="clock-box"><div class="clock-time" id="clockTime">--:--:--</div><div class="clock-date" id="clockDate"></div></div>
+      <div class="clock-box"><div class="clock-time" id="clockTime">--:--:--</div><div class="clock-date" id="clockDate"></div><div class="clock-weather" id="clockWeather" title="点击刷新" onclick="loadWeather(true)"></div></div>
     </div>
     <a class="pf-link" href="https://github.com/HAAAAe1" target="_blank">GitHub 主页 →</a>
     <div class="stat-row">
@@ -944,6 +967,109 @@ function srOpen(i){
   }
 }
 
+// ══ 现实天气 ══
+// 显示在右侧信息卡的时间下面。改城市只改 city（中文名即可）。
+// 默认走 Open-Meteo：免注册、免 key，开箱即用。
+// 想换心知天气免费版：去 https://www.seniverse.com/ 注册（免费版有天气实况接口），
+// 把私钥填进 seniverseKey 即自动切换，无需改别的地方。
+const WEATHER={
+  city:'深圳',
+  seniverseKey:'',
+  lat:22.5431,lon:114.0579        // city 反查失败时的兜底坐标（深圳）
+};
+// WMO 天气代码 → 中文（Open-Meteo 用这套编码）
+const WMO={0:'晴',1:'晴间多云',2:'多云',3:'阴',45:'雾',48:'雾凇',51:'毛毛雨',53:'毛毛雨',55:'冻雨',
+  56:'冻雨',57:'冻雨',61:'小雨',63:'中雨',65:'大雨',66:'冻雨',67:'冻雨',71:'小雪',73:'中雪',75:'大雪',
+  77:'米雪',80:'阵雨',81:'阵雨',82:'暴雨',85:'阵雪',86:'阵雪',95:'雷阵雨',96:'雷阵雨伴冰雹',99:'雷阵雨伴冰雹'};
+const CW_TTL=10*60*1000;          // 结果缓存 10 分钟，避免每次刷新都打接口
+let cwBusy=false;
+
+function cwCache(){
+  try{return JSON.parse(localStorage.getItem('cw_cache')||'null')}catch(_){return null}
+}
+function cwRender(d){
+  const el=document.getElementById('clockWeather');
+  if(!el)return;
+  el.classList.remove('cw-fail');
+  el.title=(d.tip?d.tip+' · ':'')+'点击刷新';
+  el.innerHTML='<span class="cw-city">'+esc(String(d.city))+'</span>'
+    +'<span class="cw-temp">'+esc(String(d.temp))+'°</span>'
+    +'<span>'+esc(String(d.text))+'</span>';
+}
+function cwFail(msg){
+  const el=document.getElementById('clockWeather');
+  if(!el)return;
+  el.classList.add('cw-fail');
+  el.title=(msg||'')+' · 点击重试';
+  el.innerHTML='<span>天气不可用</span>';
+}
+async function cwGeo(city){
+  const u='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)
+    +'&count=1&language=zh&format=json';
+  const j=await fetch(u).then(r=>r.json());
+  const g=j&&j.results&&j.results[0];
+  if(!g)throw new Error('没找到城市「'+city+'」');
+  return {lat:g.latitude,lon:g.longitude};
+}
+async function loadWeather(force){
+  const el=document.getElementById('clockWeather');
+  if(!el||cwBusy)return;
+  if(!force){
+    const c=cwCache();
+    if(c&&c.d&&Date.now()-c.t<CW_TTL){cwRender(c.d);return}
+  }
+  cwBusy=true;
+  try{
+    let d;
+    if(WEATHER.seniverseKey){
+      // 心知天气：https://api.seniverse.com/v3/weather/now.json
+      const u='https://api.seniverse.com/v3/weather/now.json?key='+encodeURIComponent(WEATHER.seniverseKey)
+        +'&location='+encodeURIComponent(WEATHER.city)+'&language=zh-Hans&unit=c';
+      const j=await fetch(u).then(r=>r.json());
+      const res=j&&j.results&&j.results[0];
+      if(!res)throw new Error((j&&j.status)||'心知天气返回异常');
+      d={city:res.location.name,temp:Math.round(+res.now.temperature),text:res.now.text,
+         tip:'数据：心知天气 '+String(res.last_update||'').slice(5,16).replace('T',' ')};
+    }else{
+      // Open-Meteo：先按城市名反查坐标，再取实况
+      let lat=WEATHER.lat,lon=WEATHER.lon;
+      try{const g=await cwGeo(WEATHER.city);lat=g.lat;lon=g.lon}catch(_){}
+      const u='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon
+        +'&current=temperature_2m,weather_code';
+      const j=await fetch(u).then(r=>r.json());
+      const c=j&&j.current;
+      if(!c)throw new Error('Open-Meteo 返回异常');
+      d={city:WEATHER.city,temp:Math.round(c.temperature_2m),
+         text:WMO[c.weather_code]||'—',tip:'数据：Open-Meteo'};
+    }
+    cwRender(d);
+    try{localStorage.setItem('cw_cache',JSON.stringify({t:Date.now(),d:d}))}catch(_){}
+  }catch(e){
+    // 接口挂了就退回上次成功的值（哪怕过期），总比显示「不可用」强
+    const c=cwCache();
+    if(c&&c.d)cwRender(c.d);else cwFail(e&&e.message);
+  }
+  cwBusy=false;
+}
+
+// ══ 回到顶部（左下角）══
+function scrollToTop(){
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+}
+(function(){
+  const btn=document.getElementById('toTop');
+  if(!btn)return;
+  let raf=0;
+  function upd(){
+    raf=0;
+    const y=window.scrollY||document.documentElement.scrollTop||0;
+    btn.classList.toggle('show',y>320);
+  }
+  window.addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
+  upd();
+})();
+
 // ══ GISCUS ══
 // repoId / categoryId 已填好，评论直接可用。
 const GISCUS={repo:'HAAAAE1/haaaae1.github.io',repoId:'R_kgDOVCHtZA',category:'Announcements',categoryId:'DIC_kwDOVCHtZM4DHZpT',lang:'zh-CN'};
@@ -1173,6 +1299,7 @@ updateAuthUI();
 updateThemeBtn();
 cfRender();cfApply();
 (function(){const p=n=>String(n).padStart(2,'0');function tick(){const d=new Date();document.getElementById('clockTime').textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());document.getElementById('clockDate').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`;}tick();setInterval(tick,1000);})();
+loadWeather();
 
 // 事件委托：图库点图放大、搜索结果点选、搜索框输入
 const gGrid=document.getElementById('galleryGrid');

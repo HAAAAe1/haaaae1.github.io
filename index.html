@@ -141,8 +141,9 @@ a:hover{text-decoration:underline}
 .rail{display:block;position:fixed;left:50%;bottom:0;width:520px;max-width:100%;max-height:88vh;overflow-y:auto;transform:translate(-50%,110%);transition:transform .35s ease;z-index:95;background:var(--bg);border-top:1px solid var(--border);border-radius:16px 16px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom))}
 body.rail-open{overflow:hidden}
 body.rail-open .rail{transform:translate(-50%,0)}
-/* 抽屉打开时锁住后面的页面：既防误滑，也从源头阻止「页面滚动 → 工具栏收起 → 视口变化」 */
-body.sb-open{overflow:hidden}
+/* 注：抽屉打开时**不**锁后面页面的滚动（用户要求保留滑动）。
+   防空白改由两件事承担：① .sidebar nav 的 overscroll-behavior:contain 阻断滚动接力；
+   ② 抽屉白底与灰色遮罩都往下多铺一屏，兜住视口变化时的错位。 */
 .rail-bg{position:fixed;inset:0;background:var(--dim);opacity:0;pointer-events:none;transition:opacity .3s;z-index:94}
 body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .rail-fab{position:fixed;right:16px;bottom:16px;width:52px;height:52px;padding:0;border-radius:50%;border:2px solid var(--bg);background:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.28);cursor:pointer;overflow:hidden;z-index:93}

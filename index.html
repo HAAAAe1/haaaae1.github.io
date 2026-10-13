@@ -7,15 +7,50 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Hi, camera</title>
+<meta name="description" content="HAAAAAe 的个人站。用 AI 写自用工具：Creo 工程图插件、Python 小工具、FF14 插件、QQ Bot，以及随手记的动态。">
+<meta name="author" content="HAAAAAe">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#4d6bfe">
+<meta name="theme-color" content="#17181c" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='15' fill='%234d6bfe'/><rect x='16' y='16' width='14' height='7' rx='3.5' fill='%23fff'/><circle cx='32' cy='36' r='12' fill='none' stroke='%23fff' stroke-width='4.5'/></svg>">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hi, camera">
+<meta property="og:title" content="Hi, camera">
+<meta property="og:description" content="HAAAAAe 的个人站。用 AI 写自用工具：Creo 工程图插件、Python 小工具、FF14 插件、QQ Bot，以及随手记的动态。">
+<meta property="og:url" content="https://haaaae1.github.io/">
+<meta property="og:image" content="https://haaaae1.github.io/avatar.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hi, camera">
+<meta name="twitter:description" content="HAAAAAe 的个人站。用 AI 写自用工具。">
+<meta name="twitter:image" content="https://haaaae1.github.io/avatar.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
+  color-scheme:light;
   --bg:#fff;--bg2:#f7f8fa;--bg3:#f0f2f5;
   --text:#1a1a1a;--text2:#666;--text3:#999;
-  --accent:#4d6bfe;--accent-light:#eef2ff;
+  --accent:#4d6bfe;--accent-light:#eef2ff;--on-accent:#fff;
   --border:#e5e7eb;--radius:12px;
+  --hover-shadow:0 2px 12px rgba(0,0,0,.06);
+  --scroll:rgba(0,0,0,.22);
+  --c-doc-bg:#fdeceb;--c-doc-fg:#c0392b;
+  --c-arc-bg:#fdf3e0;--c-arc-fg:#a9761a;
+  --c-oth-bg:#eef2ff;--c-oth-fg:#4d6bfe;
   --font:'Inter',system-ui,-apple-system,'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif;
+}
+html[data-theme=dark]{
+  color-scheme:dark;
+  --bg:#17181c;--bg2:#0f1013;--bg3:#25272e;
+  --text:#e9eaee;--text2:#a2a7b4;--text3:#767b89;
+  --accent:#7f95ff;--accent-light:#242842;--on-accent:#14161d;
+  --border:#2c2f37;
+  --hover-shadow:0 2px 12px rgba(0,0,0,.4);
+  --scroll:rgba(255,255,255,.22);
+  --c-doc-bg:#3a2320;--c-doc-fg:#e8796a;
+  --c-arc-bg:#37301d;--c-arc-fg:#dcab4b;
+  --c-oth-bg:#242842;--c-oth-fg:#93a6ff;
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg2);color:var(--text);line-height:1.6;font-size:14px}
@@ -38,7 +73,7 @@ a:hover{text-decoration:underline}
 .auth-bar input{flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;outline:none}
 .auth-bar input:focus{border-color:var(--accent)}
 .auth-btn{padding:8px 16px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .2s}
-.auth-btn.primary{background:var(--accent);color:#fff}
+.auth-btn.primary{background:var(--accent);color:var(--on-accent)}
 .auth-btn.primary:hover{opacity:.85}
 .auth-btn.ghost{background:var(--bg2);color:var(--text2)}
 .auth-btn.ghost:hover{background:var(--bg3)}
@@ -55,7 +90,7 @@ a:hover{text-decoration:underline}
 .composer-btns label{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:13px;cursor:pointer;background:var(--bg2);color:var(--text2);transition:all .2s}
 .composer-btns label:hover{background:var(--bg3);color:var(--text)}
 .composer-btns input[type=file]{display:none}
-.publish-btn{padding:8px 24px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .2s}
+.publish-btn{padding:8px 24px;border-radius:8px;border:none;background:var(--accent);color:var(--on-accent);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:opacity .2s}
 .publish-btn:hover{opacity:.85}
 .publish-btn:disabled{opacity:.4;cursor:not-allowed}
 .preview-area{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -139,7 +174,7 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .cf-card.is-hidden{transform:scale(.6);opacity:0;z-index:1;pointer-events:none}
 @media(max-width:1499.98px){.cf-stage{height:364px}.cf-card{width:min(370px,64vw);height:360px;margin-left:calc(min(370px,64vw) * -0.5)}}
 .cf-card::-webkit-scrollbar{width:4px}
-.cf-card::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px}
+.cf-card::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:2px}
 .cf-name{font-weight:700;font-size:13px;color:var(--text);margin-bottom:6px;word-break:break-all}
 .md-h{font-weight:700;color:var(--text);margin:8px 0 4px;font-size:12px}
 .md-li{margin:2px 0}
@@ -151,7 +186,7 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .cf-nav button{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:15px;color:var(--text2);line-height:1;transition:all .2s}
 .cf-nav button:hover{border-color:var(--accent);color:var(--accent)}
 .cf-idx{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
-.project-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.project-card:hover{box-shadow:var(--hover-shadow)}
 .project-name{font-size:16px;font-weight:700;margin-bottom:4px}
 .project-desc{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
 .project-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
@@ -181,6 +216,95 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 .img-modal img{max-width:90%;max-height:90%;border-radius:8px}
 
 .tag{display:inline-block;padding:2px 8px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-size:11px;margin-right:4px}
+
+/* ══ SIDEBAR FOOT (search + theme) ══ */
+.sidebar nav{flex:1;overflow-y:auto}
+.sidebar-foot{margin-top:auto;padding:16px 16px 0;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
+.side-act:hover{color:var(--accent);border-color:var(--accent)}
+.side-act kbd{margin-left:auto;font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
+
+/* ══ PAGE TITLE ══ */
+.page-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:20px}
+
+/* ══ MARKDOWN BODY ══ */
+.md-body{font-size:14px;line-height:1.75;word-break:break-word;overflow-wrap:anywhere}
+.md-body>*:first-child{margin-top:0}
+.md-body>*:last-child{margin-bottom:0}
+.md-body p{margin:0 0 10px}
+.md-body h1,.md-body h2,.md-body h3,.md-body h4,.md-body h5,.md-body h6{margin:18px 0 8px;font-weight:700;line-height:1.35}
+.md-body h1{font-size:19px}.md-body h2{font-size:17px}.md-body h3{font-size:15px}.md-body h4,.md-body h5,.md-body h6{font-size:14px}
+.md-body ul,.md-body ol{margin:0 0 10px;padding-left:22px}
+.md-body ul{list-style:disc}.md-body ol{list-style:decimal}
+.md-body li{margin:3px 0}
+.md-body li>ul,.md-body li>ol{margin:3px 0 0}
+.md-body a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.md-body strong{font-weight:700}
+.md-body code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px}
+.md-body pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;overflow-x:auto;margin:0 0 12px}
+.md-body pre code{background:none;padding:0;font-size:12.5px;line-height:1.6}
+.md-body blockquote{margin:0 0 12px;padding:2px 0 2px 12px;border-left:3px solid var(--border);color:var(--text2)}
+.md-body hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+.md-body img{max-width:100%;border-radius:8px}
+.md-body table{border-collapse:collapse;margin:0 0 12px;font-size:13px;display:block;max-width:100%;overflow-x:auto}
+.md-body th,.md-body td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.md-body th{background:var(--bg2);font-weight:600}
+.md-body input[type=checkbox]{margin-right:6px}
+.md-body del{color:var(--text3)}
+
+/* ══ GALLERY ══ */
+.masonry{column-count:3;column-gap:12px}
+.g-tile{position:relative;display:block;break-inside:avoid;margin:0 0 12px;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--bg);cursor:zoom-in;padding:0}
+.g-tile img{width:100%;display:block;transition:opacity .2s}
+.g-tile:hover img{opacity:.86}
+.g-tile figcaption{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;font-size:11px;color:#fff;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}
+.g-tile:hover figcaption{opacity:1}
+@media(max-width:900px){.masonry{column-count:2}}
+@media(max-width:520px){.masonry{column-count:1}}
+
+/* ══ FILES ══ */
+.file-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.file-chip{padding:5px 13px;border-radius:999px;border:1px solid var(--border);background:var(--bg);font-family:var(--font);font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s}
+.file-chip:hover{border-color:var(--accent);color:var(--accent)}
+.file-chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.file-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;text-decoration:none;color:var(--text);transition:all .2s}
+.file-row:hover{border-color:var(--accent);text-decoration:none;box-shadow:var(--hover-shadow)}
+.file-ext{flex:0 0 auto;width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:.3px;background:var(--c-oth-bg);color:var(--c-oth-fg)}
+.file-ext[data-cat=doc]{background:var(--c-doc-bg);color:var(--c-doc-fg)}
+.file-ext[data-cat=arc]{background:var(--c-arc-bg);color:var(--c-arc-fg)}
+.file-meta{flex:1;min-width:0}
+.file-name{display:block;font-size:13.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-sub{display:block;font-size:11.5px;color:var(--text3);margin-top:2px}
+.file-dl{flex:0 0 auto;font-size:12px;color:var(--accent);font-weight:500}
+
+/* ══ SEARCH ══ */
+.search-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;padding:12vh 16px 16px}
+.search-overlay.show{display:block}
+.search-box{max-width:560px;margin:0 auto;background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.28)}
+.search-box input{width:100%;border:none;outline:none;padding:16px 18px;font-family:var(--font);font-size:15px;background:transparent;color:var(--text);border-bottom:1px solid var(--border)}
+.search-box input::placeholder{color:var(--text3)}
+.search-results{max-height:52vh;overflow-y:auto;padding:6px}
+.sr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.sr-item:hover,.sr-item.sel{background:var(--bg2)}
+.sr-type{flex:0 0 auto;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-weight:500}
+.sr-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr-sub{font-size:11px;color:var(--text3);flex:0 0 auto}
+.sr-empty{padding:28px 16px;text-align:center;color:var(--text3);font-size:13px}
+.search-hint{padding:9px 18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap}
+
+/* ══ COMMENTS ══ */
+.comments{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.comments.open{display:block}
+.cm-hint{font-size:12.5px;color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;line-height:1.75}
+.cm-hint code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:ui-monospace,Consolas,monospace;color:var(--text)}
+.cm-hint a{color:var(--accent);text-decoration:underline}
+
+/* ══ FLASH HIGHLIGHT ══ */
+@keyframes flashbg{0%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}100%{border-color:var(--border);box-shadow:none}}
+.flash{animation:flashbg 1.6s ease-out}
+@media(prefers-reduced-motion:reduce){.flash{animation:none}}
 </style>
 </head>
 <body>
@@ -194,9 +318,15 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
   <nav>
     <a href="#" class="active" data-page="home" onclick="switchPage('home',this)">📋 首页</a>
     <a href="#" data-page="projects" onclick="switchPage('projects',this)">📁 项目</a>
+    <a href="#" data-page="gallery" onclick="switchPage('gallery',this)">🖼️ 图库</a>
+    <a href="#" data-page="files" onclick="switchPage('files',this)">📎 文件</a>
     <a href="#" data-page="bookmarks" onclick="switchPage('bookmarks',this)">🔗 收藏</a>
     <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
   </nav>
+  <div class="sidebar-foot">
+    <button class="side-act" onclick="openSearch()">🔍 搜索<kbd>Ctrl K</kbd></button>
+    <button class="side-act" id="themeBtn" onclick="toggleTheme()">🌙 深色模式</button>
+  </div>
 </aside>
 
 <div class="main">
@@ -223,6 +353,21 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
       </div>
     </div>
     <div id="feed"><div class="feed-loading">加载中...</div></div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="page" id="page-gallery">
+    <h2 class="page-title">图库</h2>
+    <div class="page-sub" id="gallerySub">动态里发过的所有图片</div>
+    <div class="masonry" id="galleryGrid"><div class="feed-loading">加载中...</div></div>
+  </div>
+
+  <!-- FILES -->
+  <div class="page" id="page-files">
+    <h2 class="page-title">文件</h2>
+    <div class="page-sub" id="filesSub">动态里上传过的所有附件</div>
+    <div class="file-bar" id="fileBar"></div>
+    <div id="fileList"><div class="feed-loading">加载中...</div></div>
   </div>
 
   <!-- PROJECTS -->
@@ -345,8 +490,9 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
     <a class="pf-link" href="https://github.com/HAAAAe1" target="_blank">GitHub 主页 →</a>
     <div class="stat-row">
       <div><b id="stPosts">0</b><span>动态</span></div>
-      <div><b>10</b><span>项目</span></div>
-      <div><b id="stImgs">0</b><span>图片</span></div>
+      <div><b id="stProjects">10</b><span>项目</span></div>
+      <div onclick="goPage('gallery')" style="cursor:pointer" title="查看图库"><b id="stImgs">0</b><span>图片</span></div>
+      <div onclick="goPage('files')" style="cursor:pointer" title="查看文件"><b id="stFiles">0</b><span>文件</span></div>
     </div>
     <div class="rail-title" style="margin-top:16px">项目</div>
     <div class="cf-stage" id="cfStage"></div>
@@ -376,11 +522,22 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
   <img id="imgModalImg" src="">
 </div>
 
+<!-- SEARCH -->
+<div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="搜索动态、项目、收藏、文件…" autocomplete="off" spellcheck="false">
+    <div class="search-results" id="searchResults"></div>
+    <div class="search-hint"><span><kbd>↑</kbd> <kbd>↓</kbd> 选择</span><span><kbd>Enter</kbd> 打开</span><span><kbd>Esc</kbd> 关闭</span></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <script>
 const REPO='HAAAAe1/haaaae1.github.io';
 const API='https://api.github.com';
 const LABEL='blog-feed';
-let token=localStorage.getItem('gh_token')||'';
+let token='';try{token=localStorage.getItem('gh_token')||''}catch(_){}
 let pendingImages=[],pendingFiles=[];
 let editingIssueNum=null;
 
@@ -406,11 +563,11 @@ function updateAuthUI(){
 function doLogin(){
   const t=document.getElementById('tokenInput').value.trim();
   if(!t)return;
-  token=t;localStorage.setItem('gh_token',t);
+  token=t;try{localStorage.setItem('gh_token',t)}catch(_){}
   updateAuthUI();loadFeed();
 }
 function doLogout(){
-  token='';localStorage.removeItem('gh_token');
+  token='';try{localStorage.removeItem('gh_token')}catch(_){}
   updateAuthUI();
 }
 
@@ -434,59 +591,94 @@ async function uploadAsset(filename,b64){
   return res.content.download_url;
 }
 
+// ── MARKDOWN ──
+// 优先 marked + DOMPurify；万一 CDN 没加载出来，退回站内自带的 md2html()，不至于开天窗。
+function renderMarkdown(md){
+  if(!md)return '';
+  if(window.marked&&window.DOMPurify){
+    try{
+      marked.setOptions({gfm:true,breaks:true});
+      return DOMPurify.sanitize(marked.parse(md));
+    }catch(_){}
+  }
+  return md2html(md);
+}
+
+// ── FEED DATA ──
+let FEED=[];
+function pad2(n){return String(n).padStart(2,'0')}
+function fmtTime(d){return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`}
+function parseIssue(iss){
+  const body=iss.body||'';
+  const parts=body.split('---IMAGES---');
+  let images=[],files=[];
+  if(parts[1]){
+    const imgParts=parts[1].split('---FILES---');
+    images=imgParts[0].trim().split('\n').filter(l=>l.startsWith('!['))
+      .map(l=>{const m=l.match(/!\[.*?\]\((.*?)\)/);return m?m[1]:null})
+      .filter(u=>u&&/^https:\/\//.test(u));
+    if(imgParts[1]){
+      files=imgParts[1].trim().split('\n').filter(l=>l.startsWith('- ['))
+        .map(l=>{const m=l.match(/- \[(.*?)\]\((.*?)\)/);return m?{name:m[1],url:m[2]}:null})
+        .filter(f=>f&&/^https:\/\//.test(f.url));
+    }
+  }
+  // 记住图片/附件段的原文，编辑文字时原样接回去，免得改一次就把图改没了
+  const cut=body.indexOf('---IMAGES---');
+  const tail=cut>-1?'\n\n'+body.slice(cut):'';
+  const d=new Date(iss.created_at);
+  return {num:iss.number,login:iss.user.login,date:d,ts:fmtTime(d),text:parts[0].trim(),images,files,raw:body,tail};
+}
+
+function feedItemHTML(it){
+  const imgsHtml=it.images.map(s=>`<img src="${esc(s)}" loading="lazy" onclick="showImg(this.src)" alt="">`).join('');
+  const filesHtml=it.files.map(f=>`<a class="feed-file" href="${esc(f.url)}" target="_blank" rel="noopener">📄 ${esc(f.name)}</a>`).join('');
+  const isOwner=!!token&&it.login==='HAAAAe1';
+  const ownerActions=isOwner?`
+          <button class="feed-action" onclick="openEdit(${it.num})">编辑</button>
+          <button class="feed-action danger" onclick="deletePost(${it.num})">删除</button>`:'';
+  return `<div class="feed-item" data-num="${it.num}">
+        <div class="feed-header"><div class="avatar">${esc(it.login[0].toUpperCase())}</div><div><div class="feed-name">${esc(it.login)}</div><div class="feed-time">${it.ts}</div></div></div>
+        ${it.text?`<div class="md-body">${renderMarkdown(it.text)}</div>`:''}
+        ${imgsHtml?`<div class="feed-images">${imgsHtml}</div>`:''}
+        ${filesHtml?`<div class="feed-files">${filesHtml}</div>`:''}
+        <div class="feed-actions">${ownerActions}
+          <button class="feed-action" onclick="toggleComments(${it.num},this)">💬 评论</button>
+        </div>
+        <div class="comments" id="cm-${it.num}"></div>
+      </div>`;
+}
+
+function renderStats(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  const imgs=FEED.reduce((n,f)=>n+f.images.length,0);
+  const files=FEED.reduce((n,f)=>n+f.files.length,0);
+  set('stPosts',FEED.length);set('stProjects',PROJECTS.length);set('stImgs',imgs);set('stFiles',files);
+  const gs=document.getElementById('gallerySub');if(gs)gs.textContent=`动态里发过的所有图片，共 ${imgs} 张`;
+  const fs=document.getElementById('filesSub');if(fs)fs.textContent=`动态里上传过的所有附件，共 ${files} 个`;
+}
+
 // ── LOAD FEED ──
 async function loadFeed(){
   const el=document.getElementById('feed');
   try{
     const issues=await api(`/repos/${REPO}/issues?labels=${LABEL}&state=open&sort=created&direction=desc&per_page=50`);
-    if(!issues.length){
-      el.innerHTML='<div class="feed-empty">还没有动态</div>';document.getElementById('stPosts').textContent=0;document.getElementById('stImgs').textContent=0;return;
-    }
-    document.getElementById('stPosts').textContent=issues.length;
-    document.getElementById('stImgs').textContent=issues.reduce((n,iss)=>{const p1=(iss.body||'').split('---IMAGES---')[1];return n+(p1?p1.split('---FILES---')[0].split('\n').filter(l=>l.startsWith('![')).length:0)},0);
-    el.innerHTML=issues.map(iss=>{
-      const body=iss.body||'';
-      // Parse: first line = text, then ---IMAGES--- and ---FILES--- sections
-      const parts=body.split('---IMAGES---');
-      const textPart=parts[0].trim();
-      let images=[],files=[];
-      if(parts[1]){
-        const imgParts=parts[1].split('---FILES---');
-        images=imgParts[0].trim().split('\n').filter(l=>l.startsWith('![')).map(l=>{
-          const m=l.match(/!\[.*?\]\((.*?)\)/);return m?m[1]:null;
-        }).filter(u=>u&&(/^(https:\/\/|data:image\/)/.test(u)));
-        if(imgParts[1]){
-          files=imgParts[1].trim().split('\n').filter(l=>l.startsWith('- [')).map(l=>{
-            const m=l.match(/- \[(.*?)\]\((.*?)\)/);return m?{name:m[1],url:m[2]}:null;
-          }).filter(f=>f&&/^https:\/\//.test(f.url));
-        }
-      }
-      const d=new Date(iss.created_at);
-      const ts=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-      const imgsHtml=images.map(s=>`<img src="${esc(s)}" onclick="showImg(this.src)">`).join('');
-      const filesHtml=files.map(f=>`<a class="feed-file" href="${esc(f.url)}" target="_blank">📄 ${esc(f.name)}</a>`).join('');
-      const isOwner=token&&iss.user.login==='HAAAAe1';
-      const actions=isOwner?`
-        <div class="feed-actions">
-          <button class="feed-action" onclick="openEdit(${iss.number},this)">编辑</button>
-          <button class="feed-action danger" onclick="deletePost(${iss.number})">删除</button>
-        </div>`:'';
-      return `<div class="feed-item" data-num="${iss.number}">
-        <div class="feed-header"><div class="avatar">${iss.user.login[0].toUpperCase()}</div><div><div class="feed-name">${esc(iss.user.login)}</div><div class="feed-time">${ts}</div></div></div>
-        ${textPart?`<div class="feed-text">${esc(textPart)}</div>`:''}
-        ${imgsHtml?`<div class="feed-images">${imgsHtml}</div>`:''}
-        ${filesHtml?`<div class="feed-files">${filesHtml}</div>`:''}
-        ${actions}
-      </div>`;
-    }).join('');
+    FEED=issues.map(parseIssue);
+    el.innerHTML=FEED.length?FEED.map(feedItemHTML).join(''):'<div class="feed-empty">还没有动态</div>';
+    renderStats();renderGallery();renderFiles();buildSearchIndex();
   }catch(e){
+    let msg;
     if(e.message.startsWith('403')){
-      el.innerHTML='<div class="feed-empty">⚠️ 访问太频繁，GitHub API 限流了<br><span style="font-size:12px;color:#bbb;margin-top:8px;display:block">未登录每小时只能请求 60 次，稍后再试或登录 GitHub 账号解除限制</span></div>';
+      msg='⚠️ 访问太频繁，GitHub API 限流了<br><span style="font-size:12px;color:var(--text3);margin-top:8px;display:block">未登录每小时只能请求 60 次，稍后再试或登录 GitHub 账号解除限制</span>';
     }else if(e.message.startsWith('404')){
-      el.innerHTML='<div class="feed-empty">加载失败: 仓库不存在或无权访问</div>';
+      msg='加载失败: 仓库不存在或无权访问';
     }else{
-      el.innerHTML=`<div class="feed-empty">加载失败: ${e.message}</div>`;
+      msg=`加载失败: ${e.message}`;
     }
+    el.innerHTML=`<div class="feed-empty">${msg}</div>`;
+    const g=document.getElementById('galleryGrid'),f=document.getElementById('fileList');
+    if(g)g.innerHTML='<div class="feed-empty">加载失败</div>';
+    if(f)f.innerHTML='<div class="feed-empty">加载失败</div>';
   }
 }
 
@@ -554,22 +746,23 @@ async function publish(){
 }
 
 // ── EDIT ──
-function openEdit(num,btn){
-  const item=btn.closest('.feed-item');
-  const textEl=item.querySelector('.feed-text');
+function openEdit(num){
+  const it=FEED.find(f=>f.num===num);
+  if(!it)return;
   editingIssueNum=num;
-  document.getElementById('editText').value=textEl?textEl.textContent:'';
+  document.getElementById('editText').value=it.text;
   document.getElementById('editModal').classList.add('show');
 }
 function closeEdit(){document.getElementById('editModal').classList.remove('show');editingIssueNum=null}
 async function saveEdit(){
   const text=document.getElementById('editText').value.trim();
-  if(!text||!editingIssueNum)return;
+  const it=FEED.find(f=>f.num===editingIssueNum);
+  if(!text||!editingIssueNum||!it)return;
   try{
     await api(`/repos/${REPO}/issues/${editingIssueNum}`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({body:text})
+      body:JSON.stringify({body:text+it.tail})
     });
     closeEdit();loadFeed();
   }catch(e){alert('保存失败: '+e.message)}
@@ -600,7 +793,7 @@ async function deletePost(num){
 }
 
 // ── UTILS ──
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function showImg(src){document.getElementById('imgModalImg').src=src;document.getElementById('imgModal').classList.add('show')}
 function switchPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -614,6 +807,169 @@ function toggleRail(){document.body.classList.toggle('rail-open')}
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
+}
+function goPage(name){
+  switchPage(name,document.querySelector(`.sidebar nav a[data-page="${name}"]`));
+  if(document.body.classList.contains('rail-open'))toggleRail();
+}
+function flash(el){
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+  setTimeout(()=>el.classList.remove('flash'),1800);
+}
+
+// ── THEME ──
+function updateThemeBtn(){
+  const b=document.getElementById('themeBtn');
+  if(!b)return;
+  b.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️ 浅色模式':'🌙 深色模式';
+}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  try{localStorage.setItem('theme',t)}catch(_){}
+  updateThemeBtn();
+  // 已经加载出来的 giscus 也要跟着换色，不然深色页里嵌一块白框
+  const th=t==='dark'?'dark':'light';
+  document.querySelectorAll('.comments iframe.giscus-frame').forEach(f=>{
+    try{f.contentWindow.postMessage({giscus:{setConfig:{theme:th}}},'https://giscus.app')}catch(_){}
+  });
+}
+function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}
+
+// ══ GALLERY ══
+function renderGallery(){
+  const el=document.getElementById('galleryGrid');
+  if(!el)return;
+  const tiles=[];
+  FEED.forEach(f=>f.images.forEach(u=>tiles.push({u,ts:f.ts})));
+  if(!tiles.length){el.innerHTML='<div class="feed-empty">还没有图片</div>';return}
+  el.innerHTML=tiles.map(t=>`<figure class="g-tile" data-src="${esc(t.u)}"><img src="${esc(t.u)}" loading="lazy" alt=""><figcaption>${esc(t.ts)}</figcaption></figure>`).join('');
+}
+
+// ══ FILES ══
+const EXT_DOC=['pdf','doc','docx','txt','md','xls','xlsx','csv','ppt','pptx','json','xml','log','ini','yml','yaml','sym','pro','c','h','js','py'];
+const EXT_ARC=['zip','rar','7z','tar','gz','exe','msi','dll','bat','sh'];
+function extOf(name){const m=/\.([A-Za-z0-9]+)$/.exec(name||'');return m?m[1].toLowerCase():''}
+function catOf(ext){if(EXT_DOC.includes(ext))return 'doc';if(EXT_ARC.includes(ext))return 'arc';return 'oth'}
+let fileFilter='all';
+function setFileFilter(f){fileFilter=f;renderFiles()}
+function renderFiles(){
+  const el=document.getElementById('fileList'),bar=document.getElementById('fileBar');
+  if(!el)return;
+  const items=[];
+  FEED.forEach(f=>f.files.forEach(x=>items.push({name:x.name,url:x.url,ts:f.ts,num:f.num})));
+  if(!items.length){if(bar)bar.innerHTML='';el.innerHTML='<div class="feed-empty">还没有附件</div>';return}
+  const counts={};
+  items.forEach(i=>{const e=extOf(i.name)||'其他';counts[e]=(counts[e]||0)+1});
+  if(bar){
+    bar.innerHTML=`<button class="file-chip${fileFilter==='all'?' on':''}" onclick="setFileFilter('all')">全部 ${items.length}</button>`+
+      Object.keys(counts).sort((a,b)=>counts[b]-counts[a])
+        .map(e=>`<button class="file-chip${fileFilter===e?' on':''}" onclick="setFileFilter('${e}')">${esc(e)} ${counts[e]}</button>`).join('');
+  }
+  const shown=fileFilter==='all'?items:items.filter(i=>extOf(i.name)===fileFilter);
+  el.innerHTML=shown.length?shown.map(i=>{
+    const e=extOf(i.name);
+    return `<a class="file-row" href="${esc(i.url)}" target="_blank" rel="noopener">
+      <span class="file-ext" data-cat="${catOf(e)}">${esc((e||'?').toUpperCase().slice(0,4))}</span>
+      <span class="file-meta"><span class="file-name">${esc(i.name)}</span><span class="file-sub">${esc(i.ts)} · 来自动态 #${i.num}</span></span>
+      <span class="file-dl">下载 →</span>
+    </a>`;
+  }).join(''):'<div class="feed-empty">这个类型下没有文件</div>';
+}
+
+// ══ SEARCH ══
+let INDEX=[],srSel=0,srHits=[];
+function buildSearchIndex(){
+  const idx=[];
+  FEED.forEach(f=>{
+    if(f.text)idx.push({type:'动态',title:f.text.replace(/[#*`>\[\]\n]/g,' ').slice(0,80),sub:f.ts,act:{page:'home',num:f.num},key:f.text+' '+f.ts});
+    f.files.forEach(x=>idx.push({type:'文件',title:x.name,sub:f.ts,act:{url:x.url},key:x.name+' '+f.ts}));
+    f.images.forEach((u,i)=>idx.push({type:'图片',title:'图片 '+(i+1)+' · '+(u.split('/').pop()||''),sub:f.ts,act:{url:u},key:u+' '+f.ts}));
+  });
+  PROJECTS.forEach(p=>idx.push({type:'项目',title:p.name,sub:(p.tags||[]).join(' / '),act:{page:'projects',proj:p.name},key:p.name+' '+(p.desc||'')+' '+(p.tags||[]).join(' ')}));
+  document.querySelectorAll('#page-bookmarks .bm-item').forEach(a=>{
+    const t=a.textContent.trim();
+    idx.push({type:'收藏',title:t,sub:a.href.replace(/^https?:\/\//,'').replace(/\/$/,''),act:{url:a.href},key:t+' 收藏 书签'});
+  });
+  INDEX=idx;
+}
+function openSearch(){
+  const ov=document.getElementById('searchOverlay');
+  if(!ov)return;
+  ov.classList.add('show');
+  const inp=document.getElementById('searchInput');
+  inp.value='';srSel=0;
+  doSearch('');
+  setTimeout(()=>inp.focus(),30);
+  if(document.body.classList.contains('rail-open'))toggleRail();
+}
+function closeSearch(){document.getElementById('searchOverlay').classList.remove('show')}
+function doSearch(q){
+  const box=document.getElementById('searchResults');
+  if(!box)return;
+  q=(q||'').trim().toLowerCase();
+  const all=q?INDEX.filter(it=>it.title.toLowerCase().includes(q)||it.key.toLowerCase().includes(q)):INDEX.slice(0,8);
+  srHits=all.slice(0,30);srSel=0;
+  if(!srHits.length){box.innerHTML='<div class="sr-empty">没找到匹配的内容</div>';return}
+  box.innerHTML=srHits.map((h,i)=>`<div class="sr-item${i===srSel?' sel':''}" data-i="${i}">
+    <span class="sr-type">${h.type}</span><span class="sr-title">${esc(h.title)}</span><span class="sr-sub">${esc(h.sub||'')}</span></div>`).join('');
+}
+function srMove(d){
+  if(!srHits.length)return;
+  srSel=(srSel+d+srHits.length)%srHits.length;
+  document.querySelectorAll('.sr-item').forEach((el,i)=>el.classList.toggle('sel',i===srSel));
+  const cur=document.querySelector('.sr-item.sel');
+  if(cur&&cur.scrollIntoView)cur.scrollIntoView({block:'nearest'});
+}
+function srOpen(i){
+  const h=srHits[i===undefined?srSel:i];
+  if(!h)return;
+  closeSearch();
+  const a=h.act||{};
+  if(a.url){window.open(a.url,'_blank','noopener');return}
+  switchPage(a.page,document.querySelector(`.sidebar nav a[data-page="${a.page}"]`));
+  if(a.proj){
+    const card=[...document.querySelectorAll('#page-projects .project-card')]
+      .find(c=>{const n=c.querySelector('.project-name');return n&&n.textContent.trim()===a.proj});
+    if(card)flash(card);
+  }else if(a.num){
+    const item=document.querySelector(`.feed-item[data-num="${a.num}"]`);
+    if(item)flash(item);
+  }
+}
+
+// ══ GISCUS ══
+// 把下面 repoId / categoryId 填上，评论就通了：去 https://giscus.app 授权后它直接把这两串值给你。
+const GISCUS={repo:'HAAAAE1/haaaae1.github.io',repoId:'R_kgDOVCHtZA',category:'Announcements',categoryId:'DIC_kwDOVCHtZM4DHZpT'};
+function toggleComments(num,btn){
+  const box=document.getElementById('cm-'+num);
+  if(!box)return;
+  if(box.classList.contains('open')){box.classList.remove('open');return}
+  box.classList.add('open');
+  if(box.dataset.loaded)return;
+  box.dataset.loaded='1';
+  if(!GISCUS.repoId||!GISCUS.categoryId){
+    const miss=[];
+    if(!GISCUS.repoId)miss.push('<code>repoId</code>');
+    if(!GISCUS.categoryId)miss.push('<code>categoryId</code>');
+    box.innerHTML='<div class="cm-hint">评论功能还差 '+miss.length+' 个配置：'+miss.join(' 和 ')+'。<br>打开 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a>，用 GitHub 账号授权，仓库填 <code>'+GISCUS.repo+'</code>、分类选 <b>'+GISCUS.category+'</b>，它会直接生成这两串 id，填进源码顶部的 <code>GISCUS</code> 配置即可生效。<br><span style="color:var(--text3)">本仓库的 Discussions 已启用，这一步无需再操作。每条动态按编号独立成帖，当前这条是 #'+num+'。</span></div>';
+    return;
+  }
+  const s=document.createElement('script');
+  s.src='https://giscus.app/client.js';
+  s.async=true;s.crossOrigin='anonymous';
+  s.setAttribute('data-repo',GISCUS.repo);
+  s.setAttribute('data-repo-id',GISCUS.repoId);
+  s.setAttribute('data-category',GISCUS.category);
+  s.setAttribute('data-category-id',GISCUS.categoryId);
+  s.setAttribute('data-mapping','specific');
+  s.setAttribute('data-term','blog-'+num);
+  s.setAttribute('data-reactions-enabled','1');
+  s.setAttribute('data-emit-metadata','0');
+  s.setAttribute('data-input-position','top');
+  s.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light');
+  s.setAttribute('data-lang','zh-CN');
+  box.appendChild(s);
 }
 
 // ── RIGHT RAIL: project carousel ──
@@ -673,8 +1029,29 @@ let cfIdx=0;
 
 // ── INIT ──
 updateAuthUI();
+updateThemeBtn();
 cfRender();cfApply();
 (function(){const p=n=>String(n).padStart(2,'0');function tick(){const d=new Date();document.getElementById('clockTime').textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());document.getElementById('clockDate').textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 周${'日一二三四五六'[d.getDay()]}`;}tick();setInterval(tick,1000);})();
+
+// 事件委托：图库点图放大、搜索结果点选、搜索框输入
+const gGrid=document.getElementById('galleryGrid');
+if(gGrid)gGrid.addEventListener('click',e=>{const t=e.target.closest('.g-tile');if(t)showImg(t.dataset.src)});
+const sRes=document.getElementById('searchResults');
+if(sRes)sRes.addEventListener('click',e=>{const it=e.target.closest('.sr-item');if(it)srOpen(+it.dataset.i)});
+const sInp=document.getElementById('searchInput');
+if(sInp)sInp.addEventListener('input',e=>doSearch(e.target.value));
+
+// 快捷键：Ctrl/Cmd+K 开关搜索，Esc 关闭，↑↓ 选择，回车打开
+document.addEventListener('keydown',e=>{
+  const open=document.getElementById('searchOverlay').classList.contains('show');
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open?closeSearch():openSearch();return}
+  if(!open)return;
+  if(e.key==='Escape'){e.preventDefault();closeSearch()}
+  else if(e.key==='ArrowDown'){e.preventDefault();srMove(1)}
+  else if(e.key==='ArrowUp'){e.preventDefault();srMove(-1)}
+  else if(e.key==='Enter'){e.preventDefault();srOpen()}
+});
+
 loadFeed();
 </script>
 </body>

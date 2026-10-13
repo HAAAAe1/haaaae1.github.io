@@ -304,6 +304,8 @@ kbd{font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;bac
 .cm-hint{font-size:12.5px;color:var(--text2);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;line-height:1.75}
 .cm-hint code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:11.5px;font-family:ui-monospace,Consolas,monospace;color:var(--text)}
 .cm-hint a{color:var(--accent);text-decoration:underline}
+.giscus-frame{display:block;width:100%;min-height:150px;border:none;color-scheme:light dark}
+.giscus-frame--loading{opacity:0}
 
 /* ══ FLASH HIGHLIGHT ══ */
 @keyframes flashbg{0%{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}100%{border-color:var(--border);box-shadow:none}}
@@ -943,8 +945,61 @@ function srOpen(i){
 }
 
 // ══ GISCUS ══
-// 把下面 repoId / categoryId 填上，评论就通了：去 https://giscus.app 授权后它直接把这两串值给你。
-const GISCUS={repo:'HAAAAE1/haaaae1.github.io',repoId:'R_kgDOVCHtZA',category:'Announcements',categoryId:'DIC_kwDOVCHtZM4DHZpT'};
+// repoId / categoryId 已填好，评论直接可用。
+const GISCUS={repo:'HAAAAE1/haaaae1.github.io',repoId:'R_kgDOVCHtZA',category:'Announcements',categoryId:'DIC_kwDOVCHtZM4DHZpT',lang:'zh-CN'};
+// 为什么不用 https://giscus.app/client.js：
+// 那份脚本用 document.querySelector('.giscus') 全局找「第一个」评论容器，找到就把新 iframe
+// 塞进去并清空它。于是本页每多开一个评论框，后开的会把先开的顶掉（第二条评论出现、
+// 第一条的评论消失）。它的 resize 消息也不带来源标识，多实例高度会互相覆盖。
+// 所以这里自己拼 widget URL、自己建 iframe —— 每个评论框一个完全独立的实例。
+const GISCUS_ORIGIN='https://giscus.app';
+function giscusSession(){
+  try{
+    const raw=localStorage.getItem('giscus-session');
+    if(!raw)return '';
+    try{const v=JSON.parse(raw);return typeof v==='string'?v:''}catch(_){return raw}
+  }catch(_){return ''}
+}
+function giscusOriginURL(){
+  const u=new URL(location.href);
+  u.searchParams.delete('giscus');
+  u.hash='';
+  return u.toString();
+}
+function giscusWidgetSrc(term){
+  const origin=giscusOriginURL();
+  const meta=sel=>{const m=document.querySelector(sel);return m&&m.content?m.content:''};
+  const q=new URLSearchParams({
+    origin:origin,
+    session:giscusSession(),
+    theme:document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light',
+    reactionsEnabled:'1',
+    emitMetadata:'1',
+    inputPosition:'top',
+    repo:GISCUS.repo,
+    repoId:GISCUS.repoId,
+    category:GISCUS.category,
+    categoryId:GISCUS.categoryId,
+    strict:'0',
+    description:meta('meta[property="og:description"]')||meta('meta[name="description"]'),
+    backLink:meta('meta[property="giscus:backlink"]')||origin,
+    term:term
+  });
+  return GISCUS_ORIGIN+'/'+GISCUS.lang+'/widget?'+q.toString();
+}
+function mountGiscus(box,num){
+  const term='blog-'+num;
+  const f=document.createElement('iframe');
+  f.className='giscus-frame giscus-frame--loading';
+  f.title='Comments';
+  f.setAttribute('scrolling','no');
+  f.setAttribute('allow','clipboard-write');
+  f.dataset.term=term;
+  f.src=giscusWidgetSrc(term);
+  f.style.opacity='0';
+  f.addEventListener('load',()=>{f.style.removeProperty('opacity');f.classList.remove('giscus-frame--loading')});
+  box.appendChild(f);
+}
 function toggleComments(num,btn){
   const box=document.getElementById('cm-'+num);
   if(!box)return;
@@ -959,21 +1014,7 @@ function toggleComments(num,btn){
     box.innerHTML='<div class="cm-hint">评论功能还差 '+miss.length+' 个配置：'+miss.join(' 和 ')+'。<br>打开 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a>，用 GitHub 账号授权，仓库填 <code>'+GISCUS.repo+'</code>、分类选 <b>'+GISCUS.category+'</b>，它会直接生成这两串 id，填进源码顶部的 <code>GISCUS</code> 配置即可生效。<br><span style="color:var(--text3)">本仓库的 Discussions 已启用，这一步无需再操作。每条动态按编号独立成帖，当前这条是 #'+num+'。</span></div>';
     return;
   }
-  const s=document.createElement('script');
-  s.src='https://giscus.app/client.js';
-  s.async=true;s.crossOrigin='anonymous';
-  s.setAttribute('data-repo',GISCUS.repo);
-  s.setAttribute('data-repo-id',GISCUS.repoId);
-  s.setAttribute('data-category',GISCUS.category);
-  s.setAttribute('data-category-id',GISCUS.categoryId);
-  s.setAttribute('data-mapping','specific');
-  s.setAttribute('data-term','blog-'+num);
-  s.setAttribute('data-reactions-enabled','1');
-  s.setAttribute('data-emit-metadata','1');
-  s.setAttribute('data-input-position','top');
-  s.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light');
-  s.setAttribute('data-lang','zh-CN');
-  box.appendChild(s);
+  mountGiscus(box,num);
 }
 
 // ── 评论条数：不展开也能看到 ──
@@ -1018,16 +1059,45 @@ async function loadCommentCounts(){
     applyCommentCounts();
   }
 }
-// 展开评论后 giscus 会推送讨论元数据（需要 data-emit-metadata="1"），
-// 用它把刚发的评论立刻反映到按钮上，不必等下次刷新。
+// giscus 消息统一处理：高度自适应 / 退出登录 / 错误 / 评论数实时更新。
+// 关键：giscus 的消息只带内容、不带来源标识，必须用 e.source === iframe.contentWindow
+// 精确匹配是哪个评论框发来的，否则多个评论框会互相把对方的高度覆盖掉。
+function giscusFrameBySource(src){
+  const list=document.querySelectorAll('iframe.giscus-frame');
+  for(let i=0;i<list.length;i++)if(list[i].contentWindow===src)return list[i];
+  return null;
+}
 window.addEventListener('message',e=>{
-  if(e.origin!=='https://giscus.app')return;
+  if(e.origin!==GISCUS_ORIGIN)return;
   const g=e.data&&e.data.giscus;
-  if(!g||!g.discussion||typeof g.discussion.totalCommentCount!=='number')return;
-  document.querySelectorAll('.comments').forEach(box=>{
-    const f=box.querySelector('iframe.giscus-frame');
-    if(f&&f.contentWindow===e.source)setCommentCount(box.id.replace('cm-',''),g.discussion.totalCommentCount);
-  });
+  if(!g)return;
+  const f=giscusFrameBySource(e.source);
+  if(!f)return;
+  if(g.resizeHeight)f.style.height=g.resizeHeight+'px';
+  if(g.signOut){
+    try{localStorage.removeItem('giscus-session')}catch(_){}
+    if(f.dataset.term)f.src=giscusWidgetSrc(f.dataset.term);
+    return;
+  }
+  if(g.error){
+    const m=String(g.error);
+    if(/Bad credentials|Invalid state value|State has expired/.test(m)){
+      let had=false;
+      try{had=!!localStorage.getItem('giscus-session')}catch(_){}
+      if(had){
+        try{localStorage.removeItem('giscus-session')}catch(_){}
+        if(f.dataset.term)f.src=giscusWidgetSrc(f.dataset.term);
+      }
+    }
+    console.warn('[giscus] '+m);
+    return;
+  }
+  // 展开评论后 giscus 会推送讨论元数据（emitMetadata=1），
+  // 用它把刚发的评论立刻反映到按钮上，不必等下次刷新。
+  if(g.discussion&&typeof g.discussion.totalCommentCount==='number'){
+    const box=f.closest('.comments');
+    if(box)setCommentCount(box.id.replace('cm-',''),g.discussion.totalCommentCount);
+  }
 });
 
 // ── RIGHT RAIL: project carousel ──
@@ -1086,6 +1156,19 @@ function cfApply(){
 let cfIdx=0;
 
 // ── INIT ──
+// giscus 登录回调：授权后 GitHub 会跳回本页并带上 ?giscus=<session>。
+// 这段原本由 client.js 负责，我们自建 iframe 后要自己接管，
+// 否则登录态存不下来、URL 上还会一直挂着那串参数。
+(function(){
+  try{
+    const u=new URL(location.href);
+    const s=u.searchParams.get('giscus');
+    if(!s)return;
+    localStorage.setItem('giscus-session',JSON.stringify(s));
+    u.searchParams.delete('giscus');
+    history.replaceState(undefined,document.title,u.toString());
+  }catch(_){}
+})();
 updateAuthUI();
 updateThemeBtn();
 cfRender();cfApply();

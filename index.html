@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -58,15 +58,11 @@ html[data-theme=dark]{
   --c-arc-bg:#37301d;--c-arc-fg:#dcab4b;
   --c-oth-bg:#242842;--c-oth-fg:#93a6ff;
 }
-/* 背景色提到 html 上：手机浏览器滑动收起地址栏时，来不及重绘的区域露的是画布底色，
-   给它上色后即使有瞬时空洞也和页面融为一体，看不出「空白条」。
-   overscroll-behavior 关掉边缘回弹，回弹露底也是同一种空白感的来源。 */
-html{scroll-behavior:smooth;background:var(--bg2);overscroll-behavior-y:none}
+html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg2);color:var(--text);line-height:1.6;font-size:14px}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
-/* 100dvh：地址栏收起/展开会改变可视高度，dvh 跟随真实视口，避免底部差出一截 */
-.app{display:flex;min-height:100vh;min-height:100dvh;padding-left:220px}
+.app{display:flex;min-height:100vh;padding-left:220px}
 .sidebar{width:220px;background:var(--bg);border-right:1px solid var(--border);padding:24px 0;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;transition:transform .3s}
 .sidebar-logo{padding:0 24px 32px;font-size:20px;font-weight:700}.sidebar-logo span{color:var(--accent)}
 .sidebar nav a{display:flex;align-items:center;gap:12px;padding:10px 24px;color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;border-left:3px solid transparent}

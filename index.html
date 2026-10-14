@@ -369,6 +369,53 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
   .overlay{top:0;bottom:auto;height:200vh}
 }
 
+/* ══ GAMES ══ */
+.game-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.game-chip{padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:var(--bg);font-family:var(--font);font-size:13px;color:var(--text2);cursor:pointer;transition:all .2s}
+.game-chip:hover{border-color:var(--accent);color:var(--accent)}
+.game-chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.game-pane{display:none}
+.game-pane.on{display:block}
+.game-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;max-width:400px}
+.game-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.game-head .gt{font-size:14px;font-weight:700;margin-right:auto}
+.game-stat{font-size:12px;color:var(--text3)}
+.game-stat b{color:var(--text);font-size:13px}
+.game-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-family:var(--font);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s}
+.game-btn:hover{border-color:var(--accent);color:var(--accent)}
+.game-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.game-btn.primary:hover{color:var(--on-accent);opacity:.9}
+.game-hint{font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.75}
+#snakeCv{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;touch-action:none;display:block}
+.g2-board{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px;padding:8px;touch-action:none;user-select:none;position:relative}
+.g2-cell{display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--bg3);font-weight:700;font-size:24px;font-family:var(--font);color:var(--text)}
+.g2-cell.t2{background:#eee4da;color:#776e65}.g2-cell.t4{background:#ede0c8;color:#776e65}
+.g2-cell.t8{background:#f2b179;color:#f9f6f2}.g2-cell.t16{background:#f59563;color:#f9f6f2}
+.g2-cell.t32{background:#f67c5f;color:#f9f6f2}.g2-cell.t64{background:#f65e3b;color:#f9f6f2}
+.g2-cell.t128{background:#edcf72;color:#f9f6f2;font-size:19px}.g2-cell.t256{background:#edcc61;color:#f9f6f2;font-size:19px}
+.g2-cell.t512{background:#edc850;color:#f9f6f2;font-size:19px}.g2-cell.t1024{background:#edc53f;color:#f9f6f2;font-size:15px}
+.g2-cell.t2048{background:#edc22e;color:#f9f6f2;font-size:15px}.g2-cell.tbig{background:#3c3a32;color:#f9f6f2;font-size:15px}
+.g2-msg{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--dim);border-radius:10px;z-index:2}
+.g2-msg.show{display:flex}
+.g2-msg span{color:#fff;font-weight:700;font-size:16px}
+.mine-board{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:100%;max-width:320px;user-select:none;touch-action:manipulation}
+.mine-c{aspect-ratio:1;min-width:0;border-radius:4px;border:1px solid var(--border);background:var(--bg3);font-family:var(--font);font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1}
+.mine-c:hover{border-color:var(--accent)}
+.mine-c.open{background:var(--bg2);border-color:transparent;cursor:default}
+.mine-c.boom{background:#fdecea;border-color:#dc2626}
+.mine-c[data-n="1"]{color:#4d6bfe}.mine-c[data-n="2"]{color:#16a34a}.mine-c[data-n="3"]{color:#dc2626}
+.mine-c[data-n="4"]{color:#7c3aed}.mine-c[data-n="5"]{color:#b45309}.mine-c[data-n="6"]{color:#0e7490}
+.mine-c[data-n="7"]{color:#334155}.mine-c[data-n="8"]{color:#6b7280}
+.mem-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px;user-select:none}
+.mem-c{aspect-ratio:1;position:relative;cursor:pointer;perspective:500px;background:none;border:none;padding:0}
+.mem-inner{position:absolute;inset:0;transition:transform .35s;transform-style:preserve-3d}
+.mem-c.open .mem-inner,.mem-c.done .mem-inner{transform:rotateY(180deg)}
+.mem-f,.mem-b{position:absolute;inset:0;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.mem-f{background:var(--bg2);color:var(--text3);font-size:20px}
+.mem-b{background:var(--accent-light);transform:rotateY(180deg);font-size:26px}
+.mem-c.done{cursor:default}
+.mem-c.done .mem-b{border-color:var(--accent);opacity:.7}
+
 /* ══ 诊断浮层（网址后加 ?debug 才出现，平时完全不显示）══ */
 #vhDebug{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:6px 8px;background:rgba(0,0,0,.82);color:#7dfc00;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;pointer-events:none}
 body.dbgon #vhDebug{display:block}
@@ -398,6 +445,7 @@ body.dbgon #vhDebug{display:block}
     <a href="#" data-page="files" onclick="switchPage('files',this)">📎 文件</a>
     <a href="#" data-page="bookmarks" onclick="switchPage('bookmarks',this)">🔗 收藏</a>
     <a href="#" data-page="guest" onclick="switchPage('guest',this)">💬 留言</a>
+    <a href="#" data-page="games" onclick="switchPage('games',this)">🎮 游戏</a>
     <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
   </nav>
   <div class="sidebar-foot">
@@ -535,6 +583,74 @@ body.dbgon #vhDebug{display:block}
         <a class="bm-item" href="https://chat.openai.com" target="_blank"><div class="bm-icon">🤖</div>ChatGPT</a>
         <a class="bm-item" href="https://chat.deepseek.com" target="_blank"><div class="bm-icon">🐋</div>DeepSeek</a>
         <a class="bm-item" href="https://miot-mimo.com" target="_blank"><div class="bm-icon">🧠</div>MiMo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏 -->
+  <div class="page" id="page-games">
+    <div class="page-title">🎮 游戏</div>
+    <div class="page-sub">摸鱼专区。最高分存在这台设备的浏览器里，不联网也能玩。</div>
+    <div class="game-bar">
+      <button class="game-chip on" data-game="snake" onclick="switchGame('snake')">🐍 贪吃蛇</button>
+      <button class="game-chip" data-game="g2048" onclick="switchGame('g2048')">🔢 2048</button>
+      <button class="game-chip" data-game="mine" onclick="switchGame('mine')">💣 扫雷</button>
+      <button class="game-chip" data-game="mem" onclick="switchGame('mem')">🃏 记忆翻牌</button>
+    </div>
+
+    <div class="game-pane on" id="gp-snake">
+      <div class="game-card">
+        <div class="game-head">
+          <span class="gt">贪吃蛇</span>
+          <span class="game-stat">得分 <b id="snakeScore">0</b></span>
+          <span class="game-stat">最高 <b id="snakeBest">—</b></span>
+          <button class="game-btn primary" onclick="snakeReset()">重开</button>
+        </div>
+        <canvas id="snakeCv"></canvas>
+        <div class="game-hint">电脑：方向键 / WASD 控制，空格开始或暂停。<br>手机：在棋盘上滑动控制方向，轻点棋盘开始 / 暂停。每吃 5 个加速一点。</div>
+      </div>
+    </div>
+
+    <div class="game-pane" id="gp-g2048">
+      <div class="game-card">
+        <div class="game-head">
+          <span class="gt">2048</span>
+          <span class="game-stat">得分 <b id="g2Score">0</b></span>
+          <span class="game-stat">最高 <b id="g2Best">—</b></span>
+          <button class="game-btn primary" onclick="g2048Reset()">新游戏</button>
+        </div>
+        <div class="g2-board" id="g2Board">
+          <div class="g2-msg" id="g2Msg"><span id="g2MsgText"></span><button class="game-btn primary" onclick="g2048Reset()">再来一局</button></div>
+        </div>
+        <div class="game-hint">方向键或滑动，相同的数字相撞会合并，合出 2048 就赢了（还能继续冲）。</div>
+      </div>
+    </div>
+
+    <div class="game-pane" id="gp-mine">
+      <div class="game-card">
+        <div class="game-head">
+          <span class="gt">扫雷 <span id="mineFace">🙂</span></span>
+          <span class="game-stat">🚩 <b id="mineLeft">10</b></span>
+          <span class="game-stat">⏱ <b id="mineTime">0</b>s</span>
+          <span class="game-stat">最快 <b id="mineBest">—</b>s</span>
+          <button class="game-btn" id="mineFlagBtn" onclick="mineToggleFlag()">🚩 插旗：关</button>
+          <button class="game-btn primary" onclick="mineReset()">重开</button>
+        </div>
+        <div class="mine-board" id="mineBoard"></div>
+        <div class="game-hint">9×9，10 颗雷。点开格子，数字是周围雷数；右键插旗，手机开「插旗」开关或长按插旗。第一次点的位置保证安全。</div>
+      </div>
+    </div>
+
+    <div class="game-pane" id="gp-mem">
+      <div class="game-card">
+        <div class="game-head">
+          <span class="gt">记忆翻牌</span>
+          <span class="game-stat">步数 <b id="memMoves">0</b></span>
+          <span class="game-stat">最少 <b id="memBest">—</b></span>
+          <button class="game-btn primary" onclick="memReset()">重开</button>
+        </div>
+        <div class="mem-board" id="memBoard"></div>
+        <div class="game-hint">8 对卡牌，翻开两张一样的就留住，全部配对为止。步数越少越强。</div>
       </div>
     </div>
   </div>
@@ -920,6 +1036,7 @@ function switchPage(name,el){
   if(el)el.classList.add('active');
   if(window.innerWidth<=768)toggleSidebar();
   if(name==='guest')mountGuestbook();   // 留言板首次进入才挂 iframe
+  if(name==='games')switchGame(gameActive||'snake');   // 游戏页首次进入才初始化
   window.scrollTo(0,0);
 }
 function toggleRail(){document.body.classList.toggle('rail-open')}
@@ -1512,6 +1629,397 @@ document.addEventListener('keydown',e=>{
 });
 
 loadFeed();
+
+// ══ GAMES ══ 四个小游戏，全部本地运行，最高分存 localStorage ══
+var gameActive='';
+function switchGame(name){
+  gameActive=name;
+  document.querySelectorAll('.game-chip').forEach(c=>c.classList.toggle('on',c.dataset.game===name));
+  document.querySelectorAll('.game-pane').forEach(p=>p.classList.toggle('on',p.id==='gp-'+name));
+  if(name==='snake')snakeInit();
+  else if(name==='g2048')g2048Init();
+  else if(name==='mine')mineInit();
+  else if(name==='mem')memInit();
+}
+function bestText(key){let v=null;try{v=localStorage.getItem(key)}catch(_){}return v===null?'—':v}
+function bestHigh(key,val){try{const o=+(localStorage.getItem(key)||0);if(val>o)localStorage.setItem(key,String(val))}catch(_){}}
+function bestLow(key,val){try{const o=localStorage.getItem(key);if(o===null||val<+o)localStorage.setItem(key,String(val))}catch(_){}}
+
+/* —— 贪吃蛇 —— */
+var SN={g:20,cs:16};
+var SK=null;
+function snakeInit(){
+  if(SK)return;
+  SK={run:false,paused:false,dead:false,timer:0,dir:{x:1,y:0},next:null,snake:[],food:null,score:0,speed:150};
+  const cv=document.getElementById('snakeCv');
+  cv.width=SN.g*SN.cs;cv.height=SN.g*SN.cs;
+  let tx=0,ty=0,lastTap=0;
+  cv.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  cv.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)<20&&Math.abs(dy)<20){const n=Date.now();if(n-lastTap>300){lastTap=n;snakeStart()}}
+    else if(Math.abs(dx)>Math.abs(dy))snakeDir(dx>0?{x:1,y:0}:{x:-1,y:0});
+    else snakeDir(dy>0?{x:0,y:1}:{x:0,y:-1});
+  },{passive:true});
+  cv.addEventListener('click',()=>{const n=Date.now();if(n-lastTap>300){lastTap=n;snakeStart()}});
+  document.getElementById('snakeBest').textContent=bestText('gk_snake');
+  snakeReset();
+}
+function snakeReset(){
+  if(!SK)return;
+  clearInterval(SK.timer);SK.timer=0;
+  SK.snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  SK.dir={x:1,y:0};SK.next=null;SK.score=0;SK.dead=false;SK.paused=false;SK.run=false;SK.speed=150;
+  SK.food=snakeFood();
+  document.getElementById('snakeScore').textContent='0';
+  snakeDraw();
+}
+function snakeFood(){
+  let p;
+  do{p={x:Math.floor(Math.random()*SN.g),y:Math.floor(Math.random()*SN.g)}}
+  while(SK.snake.some(c=>c.x===p.x&&c.y===p.y));
+  return p;
+}
+function snakeStart(){
+  if(SK.dead){snakeReset();return}
+  if(SK.run){SK.paused=!SK.paused;snakeDraw();return}
+  SK.run=true;SK.paused=false;
+  SK.timer=setInterval(()=>{if(!SK.paused)snakeStep()},SK.speed);
+  snakeDraw();
+}
+function snakeDir(d){
+  if(!SK||SK.dead)return;
+  if(!SK.run)snakeStart();
+  if(SK.paused)return;
+  if(d.x===-SK.dir.x&&d.y===-SK.dir.y)return;   // 不能直接掉头
+  SK.next=d;
+}
+function snakeStep(){
+  if(SK.next){SK.dir=SK.next;SK.next=null}
+  const h={x:SK.snake[0].x+SK.dir.x,y:SK.snake[0].y+SK.dir.y};
+  if(h.x<0||h.y<0||h.x>=SN.g||h.y>=SN.g||SK.snake.some(c=>c.x===h.x&&c.y===h.y)){
+    SK.dead=true;SK.run=false;clearInterval(SK.timer);SK.timer=0;
+    bestHigh('gk_snake',SK.score);
+    document.getElementById('snakeBest').textContent=bestText('gk_snake');
+    snakeDraw();return;
+  }
+  SK.snake.unshift(h);
+  if(h.x===SK.food.x&&h.y===SK.food.y){
+    SK.score++;
+    document.getElementById('snakeScore').textContent=SK.score;
+    SK.food=snakeFood();
+    if(SK.score%5===0&&SK.speed>70){
+      SK.speed-=10;clearInterval(SK.timer);
+      SK.timer=setInterval(()=>{if(!SK.paused)snakeStep()},SK.speed);
+    }
+  }else SK.snake.pop();
+  snakeDraw();
+}
+function snakeDraw(){
+  const cv=document.getElementById('snakeCv'),ctx=cv.getContext&&cv.getContext('2d');
+  if(!ctx)return;
+  const acc=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#4d6bfe';
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle='#e74c3c';
+  ctx.beginPath();
+  ctx.arc(SK.food.x*SN.cs+SN.cs/2,SK.food.y*SN.cs+SN.cs/2,SN.cs/2-2,0,Math.PI*2);
+  ctx.fill();
+  SK.snake.forEach((c,i)=>{
+    ctx.fillStyle=acc;
+    ctx.globalAlpha=i===0?1:Math.max(.3,.9-i*.04);
+    ctx.fillRect(c.x*SN.cs+1,c.y*SN.cs+1,SN.cs-2,SN.cs-2);
+  });
+  ctx.globalAlpha=1;
+  if(SK.dead||SK.paused||!SK.run){
+    ctx.fillStyle='rgba(0,0,0,.55)';
+    ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle='#fff';ctx.textAlign='center';
+    ctx.font='bold 17px sans-serif';
+    ctx.fillText(SK.dead?'💀 得分 '+SK.score:(SK.paused?'暂停':'贪吃蛇'),cv.width/2,cv.height/2-4);
+    ctx.font='12px sans-serif';
+    ctx.fillText(SK.dead?'点棋盘或按方向键重开':(SK.paused?'点棋盘继续':'按方向键或滑动开始'),cv.width/2,cv.height/2+18);
+  }
+}
+
+/* —— 2048 —— */
+var G2=null;
+function g2048Init(){
+  if(G2)return;
+  G2={grid:[],score:0,over:false,won:false};
+  const b=document.getElementById('g2Board');
+  for(let i=0;i<16;i++){const d=document.createElement('div');d.className='g2-cell';b.appendChild(d)}
+  let tx=0,ty=0;
+  b.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  b.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+    if(Math.abs(dx)>Math.abs(dy))g2048Move(dx>0?'right':'left');
+    else g2048Move(dy>0?'down':'up');
+  },{passive:true});
+  document.getElementById('g2Best').textContent=bestText('gk_2048');
+  g2048Reset();
+}
+function g2048Reset(){
+  G2.grid=Array.from({length:4},()=>[0,0,0,0]);
+  G2.score=0;G2.over=false;G2.won=false;
+  document.getElementById('g2Score').textContent='0';
+  document.getElementById('g2Msg').classList.remove('show');
+  g2048Add();g2048Add();g2048Draw();
+}
+function g2048Add(){
+  const e=[];
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++)if(!G2.grid[r][c])e.push([r,c]);
+  if(!e.length)return;
+  const p=e[Math.floor(Math.random()*e.length)];
+  G2.grid[p[0]][p[1]]=Math.random()<.9?2:4;
+}
+function g2048Slide(row){   // 一行向左滑：滤掉空位 → 相邻等值合并 → 补零
+  const a=row.filter(v=>v);let sc=0;
+  for(let i=0;i<a.length-1;i++){if(a[i]===a[i+1]){a[i]*=2;sc+=a[i];a.splice(i+1,1)}}
+  while(a.length<4)a.push(0);
+  return [a,sc];
+}
+function g2048Move(dir){
+  if(!G2||G2.over)return;
+  let moved=false,tot=0;
+  for(let i=0;i<4;i++){
+    const pos=[];
+    for(let j=0;j<4;j++){
+      if(dir==='left')pos.push([i,j]);
+      else if(dir==='right')pos.push([i,3-j]);
+      else if(dir==='up')pos.push([j,i]);
+      else pos.push([3-j,i]);
+    }
+    const r=g2048Slide(pos.map(p=>G2.grid[p[0]][p[1]]));
+    tot+=r[1];
+    pos.forEach((p,k)=>{if(G2.grid[p[0]][p[1]]!==r[0][k]){moved=true;G2.grid[p[0]][p[1]]=r[0][k]}});
+  }
+  if(!moved)return;
+  G2.score+=tot;
+  document.getElementById('g2Score').textContent=G2.score;
+  bestHigh('gk_2048',G2.score);
+  document.getElementById('g2Best').textContent=bestText('gk_2048');
+  g2048Add();
+  g2048Draw();
+  if(!G2.won){
+    for(let r=0;r<4&&!G2.won;r++)for(let c=0;c<4;c++)if(G2.grid[r][c]>=2048){G2.won=true;break}
+    if(G2.won){
+      g2048Msg('🎉 2048！还能继续冲');
+      setTimeout(()=>{if(!G2.over)document.getElementById('g2Msg').classList.remove('show')},1600);
+    }
+  }
+  if(g2048Stuck()){G2.over=true;g2048Msg('😵 无路可走了，得分 '+G2.score)}
+}
+function g2048Stuck(){
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+    const v=G2.grid[r][c];
+    if(!v)return false;
+    if(c<3&&G2.grid[r][c+1]===v)return false;
+    if(r<3&&G2.grid[r+1][c]===v)return false;
+  }
+  return true;
+}
+function g2048Msg(t){
+  document.getElementById('g2MsgText').textContent=t;
+  document.getElementById('g2Msg').classList.add('show');
+}
+function g2048Draw(){
+  const cells=document.querySelectorAll('#g2Board .g2-cell');
+  let k=0;
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+    const v=G2.grid[r][c],d=cells[k++];
+    d.textContent=v||'';
+    d.className='g2-cell'+(v?(v>2048?' tbig':' t'+v):'');
+  }
+}
+
+/* —— 扫雷 —— */
+var MS=null;
+function mineInit(){
+  if(MS)return;
+  MS={W:9,H:9,M:10,cells:[],grid:[],open:0,flags:0,started:false,over:false,timer:0,t0:0,flagMode:false,firstClick:true,lastFlag:0};
+  const b=document.getElementById('mineBoard');
+  for(let y=0;y<MS.H;y++)for(let x=0;x<MS.W;x++){
+    const d=document.createElement('button');
+    d.className='mine-c';
+    d.addEventListener('click',()=>{if(Date.now()-MS.lastFlag<500)return;MS.flagMode?mineFlag(x,y):mineOpen(x,y)});
+    d.addEventListener('contextmenu',e=>{e.preventDefault();mineFlag(x,y)});
+    let lp=0;   // 长按插旗（手机）：按住 420ms 触发，松手前移动则取消
+    d.addEventListener('touchstart',()=>{lp=setTimeout(()=>{lp=0;mineFlag(x,y)},420)},{passive:true});
+    d.addEventListener('touchend',()=>{if(lp){clearTimeout(lp);lp=0}},{passive:true});
+    d.addEventListener('touchmove',()=>{if(lp){clearTimeout(lp);lp=0}},{passive:true});
+    b.appendChild(d);
+    MS.cells.push(d);
+  }
+  document.getElementById('mineBest').textContent=bestText('gk_mine');
+  mineReset();
+}
+function mineReset(){
+  clearInterval(MS.timer);MS.timer=0;MS.t0=0;
+  MS.grid=Array.from({length:MS.W*MS.H},()=>({m:false,o:false,f:false,n:0,boom:false}));
+  MS.open=0;MS.flags=0;MS.started=false;MS.over=false;MS.firstClick=true;MS.lastFlag=0;
+  document.getElementById('mineTime').textContent='0';
+  document.getElementById('mineFace').textContent='🙂';
+  mineDraw();
+}
+function minePlace(sx,sy){   // 首点之后才布雷，首点及其周围 8 格保证无雷
+  let n=0;
+  while(n<MS.M){
+    const i=Math.floor(Math.random()*MS.W*MS.H);
+    const x=i%MS.W,y=(i-x)/MS.W;
+    if(MS.grid[i].m)continue;
+    if(Math.abs(x-sx)<=1&&Math.abs(y-sy)<=1)continue;
+    MS.grid[i].m=true;n++;
+  }
+  for(let y=0;y<MS.H;y++)for(let x=0;x<MS.W;x++){
+    let c=0;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      const nx=x+dx,ny=y+dy;
+      if(nx>=0&&ny>=0&&nx<MS.W&&ny<MS.H&&MS.grid[ny*MS.W+nx].m)c++;
+    }
+    MS.grid[y*MS.W+x].n=c;
+  }
+}
+function mineOpen(x,y){
+  if(MS.over)return;
+  const i=y*MS.W+x,c=MS.grid[i];
+  if(c.o||c.f)return;
+  if(MS.firstClick){
+    MS.firstClick=false;MS.started=true;minePlace(x,y);
+    MS.t0=Date.now();
+    MS.timer=setInterval(()=>{document.getElementById('mineTime').textContent=Math.floor((Date.now()-MS.t0)/1000)},500);
+  }
+  if(c.m){mineBoom(i);mineDraw();return}
+  mineFlood(x,y);
+  if(!MS.over&&MS.open===MS.W*MS.H-MS.M)mineWin();
+  mineDraw();
+}
+function mineFlood(x,y){
+  const c=MS.grid[y*MS.W+x];
+  if(c.o||c.f)return;
+  c.o=true;MS.open++;
+  if(c.n===0){
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      const nx=x+dx,ny=y+dy;
+      if(nx>=0&&ny>=0&&nx<MS.W&&ny<MS.H)mineFlood(nx,ny);
+    }
+  }
+}
+function mineFlag(x,y){
+  if(MS.over)return;
+  const c=MS.grid[y*MS.W+x];
+  if(c.o)return;
+  c.f=!c.f;MS.flags+=c.f?1:-1;
+  MS.lastFlag=Date.now();
+  mineDraw();
+}
+function mineBoom(i){
+  MS.over=true;clearInterval(MS.timer);
+  MS.grid.forEach(c=>{if(c.m)c.o=true});
+  MS.grid[i].boom=true;
+  document.getElementById('mineFace').textContent='😵';
+}
+function mineWin(){
+  MS.over=true;clearInterval(MS.timer);
+  document.getElementById('mineFace').textContent='😎';
+  MS.grid.forEach(c=>{if(c.m)c.f=true});   // 赢了自动把旗插满
+  const t=Math.floor((Date.now()-MS.t0)/1000);
+  bestLow('gk_mine',t);
+  document.getElementById('mineBest').textContent=bestText('gk_mine');
+}
+function mineToggleFlag(){
+  if(!MS)return;
+  MS.flagMode=!MS.flagMode;
+  const b=document.getElementById('mineFlagBtn');
+  b.textContent=MS.flagMode?'🚩 插旗：开':'🚩 插旗：关';
+  b.classList.toggle('primary',MS.flagMode);
+}
+function mineDraw(){
+  document.getElementById('mineLeft').textContent=String(MS.M-MS.flags);
+  MS.cells.forEach((d,i)=>{
+    const c=MS.grid[i];
+    d.className='mine-c'+(c.o?' open':'')+(c.boom?' boom':'');
+    if(c.o)d.textContent=c.m?'💣':(c.n||'');
+    else if(c.f)d.textContent='🚩';
+    else d.textContent='';
+    if(c.o&&c.n)d.dataset.n=c.n;else d.removeAttribute('data-n');
+  });
+}
+
+/* —— 记忆翻牌 —— */
+var MEM_EMO=['🐱','🎮','🚀','⭐','🍕','🎧','🐸','🍩'];
+var MEM=null;
+function memInit(){
+  if(MEM)return;
+  MEM={cards:[],open:[],moves:0,done:0,lock:false};
+  const b=document.getElementById('memBoard');
+  for(let i=0;i<16;i++){
+    const d=document.createElement('button');
+    d.className='mem-c';
+    d.innerHTML='<div class="mem-inner"><div class="mem-f">❔</div><div class="mem-b"></div></div>';
+    d.addEventListener('click',()=>memFlip(i));
+    b.appendChild(d);
+  }
+  document.getElementById('memBest').textContent=bestText('gk_mem');
+  memReset();
+}
+function memReset(){
+  MEM.cards=MEM_EMO.concat(MEM_EMO).map(e=>({e,open:false,done:false})).sort(()=>Math.random()-.5);
+  MEM.open=[];MEM.moves=0;MEM.done=0;MEM.lock=false;
+  document.getElementById('memMoves').textContent='0';
+  memDraw();
+}
+function memFlip(i){
+  if(MEM.lock)return;
+  const c=MEM.cards[i];
+  if(c.done||c.open||MEM.open.length>=2)return;
+  c.open=true;MEM.open.push(i);memDraw();
+  if(MEM.open.length===2){
+    MEM.moves++;
+    document.getElementById('memMoves').textContent=String(MEM.moves);
+    const a=MEM.open[0],b=MEM.open[1];
+    if(MEM.cards[a].e===MEM.cards[b].e){
+      MEM.cards[a].done=MEM.cards[b].done=true;MEM.done++;
+      MEM.open=[];
+      memDraw();
+      if(MEM.done===MEM_EMO.length){
+        bestLow('gk_mem',MEM.moves);
+        document.getElementById('memBest').textContent=bestText('gk_mem');
+      }
+    }else{
+      MEM.lock=true;
+      setTimeout(()=>{
+        MEM.cards[a].open=MEM.cards[b].open=false;
+        MEM.open=[];MEM.lock=false;memDraw();
+      },650);
+    }
+  }
+}
+function memDraw(){
+  document.querySelectorAll('#memBoard .mem-c').forEach((d,i)=>{
+    const c=MEM.cards[i];
+    d.classList.toggle('open',c.open);
+    d.classList.toggle('done',c.done);
+    d.querySelector('.mem-b').textContent=c.e;
+  });
+}
+
+// 游戏键盘控制：只在游戏页生效；输入框聚焦 / 搜索框打开时让位，不抢按键
+document.addEventListener('keydown',e=>{
+  const pg=document.getElementById('page-games');
+  if(!pg||!pg.classList.contains('active'))return;
+  const t=e.target;
+  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+  if(document.getElementById('searchOverlay').classList.contains('show'))return;
+  const K=e.key;
+  const d={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[K]||{W:[0,-1],S:[0,1],A:[-1,0],D:[1,0]}[K];
+  if(d){
+    e.preventDefault();
+    if(gameActive==='snake')snakeDir({x:d[0],y:d[1]});
+    else if(gameActive==='g2048')g2048Move(d[1]===-1?'up':d[1]===1?'down':d[0]===-1?'left':'right');
+  }else if(K===' '&&gameActive==='snake'){e.preventDefault();snakeStart()}
+});
 </script>
 </body>
 </html>

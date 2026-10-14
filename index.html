@@ -41,6 +41,7 @@
   --c-doc-bg:#fdeceb;--c-doc-fg:#c0392b;
   --c-arc-bg:#fdf3e0;--c-arc-fg:#a9761a;
   --c-oth-bg:#eef2ff;--c-oth-fg:#4d6bfe;
+  --sq-l:#f0d9b5;--sq-d:#b58863;
   --font:'Inter',system-ui,-apple-system,'Segoe UI','Microsoft YaHei','PingFang SC',sans-serif;
 }
 html[data-theme=dark]{
@@ -57,6 +58,7 @@ html[data-theme=dark]{
   --c-doc-bg:#3a2320;--c-doc-fg:#e8796a;
   --c-arc-bg:#37301d;--c-arc-fg:#dcab4b;
   --c-oth-bg:#242842;--c-oth-fg:#93a6ff;
+  --sq-l:#7d7466;--sq-d:#4e483c;
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg2);color:var(--text);line-height:1.6;font-size:14px}
@@ -415,6 +417,18 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .mem-b{background:var(--accent-light);transform:rotateY(180deg);font-size:26px}
 .mem-c.done{cursor:default}
 .mem-c.done .mem-b{border-color:var(--accent);opacity:.7}
+.ch-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;max-width:320px;aspect-ratio:1;border:1px solid var(--border);border-radius:10px;overflow:hidden;user-select:none;touch-action:manipulation}
+.ch-board.flip{transform:rotate(180deg)}
+.ch-board.flip .ch-sq{transform:rotate(180deg)}
+.ch-sq{display:flex;align-items:center;justify-content:center;background:var(--sq-l);border:none;padding:0;cursor:pointer;font-size:26px;line-height:1;position:relative;font-family:var(--font)}
+.ch-sq.dark{background:var(--sq-d)}
+.ch-sq.sel{box-shadow:inset 0 0 0 3px var(--accent)}
+.ch-sq.hint::after{content:'';position:absolute;width:28%;height:28%;border-radius:50%;background:rgba(0,0,0,.3)}
+.ch-sq.cap{box-shadow:inset 0 0 0 3px rgba(220,38,38,.9)}
+.wp{color:#fff;text-shadow:0 1px 0 #333,-1px 0 0 #333,1px 0 0 #333,0 -1px 0 #333}
+.bp{color:#22262e;text-shadow:0 1px 0 #d8dce4,-1px 0 0 #d8dce4,1px 0 0 #d8dce4,0 -1px 0 #d8dce4}
+.ch-promo{display:none;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;font-size:12px;color:var(--text3)}
+.ch-promo.show{display:flex}
 
 /* ══ 诊断浮层（网址后加 ?debug 才出现，平时完全不显示）══ */
 #vhDebug{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:6px 8px;background:rgba(0,0,0,.82);color:#7dfc00;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-all;pointer-events:none}
@@ -596,6 +610,7 @@ body.dbgon #vhDebug{display:block}
       <button class="game-chip" data-game="g2048" onclick="switchGame('g2048')">🔢 2048</button>
       <button class="game-chip" data-game="mine" onclick="switchGame('mine')">💣 扫雷</button>
       <button class="game-chip" data-game="mem" onclick="switchGame('mem')">🃏 记忆翻牌</button>
+      <button class="game-chip" data-game="ch" onclick="switchGame('ch')">♞ 国际象棋</button>
     </div>
 
     <div class="game-pane on" id="gp-snake">
@@ -651,6 +666,21 @@ body.dbgon #vhDebug{display:block}
         </div>
         <div class="mem-board" id="memBoard"></div>
         <div class="game-hint">8 对卡牌，翻开两张一样的就留住，全部配对为止。步数越少越强。</div>
+      </div>
+    </div>
+
+    <div class="game-pane" id="gp-ch">
+      <div class="game-card">
+        <div class="game-head">
+          <span class="gt">国际象棋</span>
+          <span class="game-stat" id="chStatus">你的回合（白方）</span>
+          <button class="game-btn" onclick="chUndo()">悔棋</button>
+          <button class="game-btn" onclick="chFlip()">翻转</button>
+          <button class="game-btn primary" onclick="chNew()">新局</button>
+        </div>
+        <div class="ch-board" id="chBoard"></div>
+        <div class="ch-promo" id="chPromo"></div>
+        <div class="game-hint">你执白先行，对手是电脑（一步想 1 秒左右）。点自己的棋子选中，圆点是能走的位置，红框是能吃子。规则完整：王车易位、吃过路兵、兵升变（会让你选升什么）。</div>
       </div>
     </div>
   </div>
@@ -1640,6 +1670,7 @@ function switchGame(name){
   else if(name==='g2048')g2048Init();
   else if(name==='mine')mineInit();
   else if(name==='mem')memInit();
+  else if(name==='ch')chInit();
 }
 function bestText(key){let v=null;try{v=localStorage.getItem(key)}catch(_){}return v===null?'—':v}
 function bestHigh(key,val){try{const o=+(localStorage.getItem(key)||0);if(val>o)localStorage.setItem(key,String(val))}catch(_){}}
@@ -2005,7 +2036,331 @@ function memDraw(){
   });
 }
 
+// ══ 国际象棋（对战电脑）══
+// 棋盘用 64 长度数组表示，index = row*8+col，row 0 = 第 8 横排（黑方底线）。
+// 大写 = 白方，小写 = 黑方，'' = 空。走子合法性靠"先假设走一步，再看自己王是否被将"来过滤。
+var CH=null;
+var CH_VAL={p:100,n:320,b:330,r:500,q:900,k:20000};
+var CH_GLYPH={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+var CH_DIR={
+  n:[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]],
+  b:[[-1,-1],[-1,1],[1,-1],[1,1]],
+  r:[[-1,0],[1,0],[0,-1],[0,1]],
+  k:[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
+};
+function chColor(p){return p?(p===p.toUpperCase()?'w':'b'):''}
+function chKingSq(bd,col){
+  const t=col==='w'?'K':'k';
+  for(let i=0;i<64;i++)if(bd[i]===t)return i;
+  return -1;
+}
+function chAttacked(bd,sq,by){   // sq 是否被 by 方攻击
+  const r=(sq/8)|0,c=sq%8;
+  const pd=by==='w'?1:-1;        // 白兵只能向上攻击，所以攻击 sq 的白兵在下一行
+  for(const dc of[-1,1]){
+    const nr=r+pd,nc=c+dc;
+    if(nr>=0&&nr<8&&nc>=0&&nc<8){
+      const p=bd[nr*8+nc];
+      if(p&&chColor(p)===by&&p.toLowerCase()==='p')return true;
+    }
+  }
+  for(const d of CH_DIR.n){
+    const nr=r+d[0],nc=c+d[1];
+    if(nr<0||nr>7||nc<0||nc>7)continue;
+    const p=bd[nr*8+nc];
+    if(p&&chColor(p)===by&&p.toLowerCase()==='n')return true;
+  }
+  for(const d of CH_DIR.k){
+    const nr=r+d[0],nc=c+d[1];
+    if(nr<0||nr>7||nc<0||nc>7)continue;
+    const p=bd[nr*8+nc];
+    if(p&&chColor(p)===by&&p.toLowerCase()==='k')return true;
+  }
+  const slide=(dirs,types)=>{
+    for(const d of dirs){
+      let nr=r+d[0],nc=c+d[1];
+      while(nr>=0&&nr<8&&nc>=0&&nc<8){
+        const p=bd[nr*8+nc];
+        if(p){
+          if(chColor(p)===by&&types.indexOf(p.toLowerCase())>=0)return true;
+          break;
+        }
+        nr+=d[0];nc+=d[1];
+      }
+    }
+    return false;
+  };
+  if(slide(CH_DIR.r,['r','q']))return true;
+  if(slide(CH_DIR.b,['b','q']))return true;
+  return false;
+}
+function chPawnMove(out,f,t,col){
+  const tr=(t/8)|0;
+  if((col==='w'&&tr===0)||(col==='b'&&tr===7)){
+    ['q','r','b','n'].forEach(x=>out.push({f:f,t:t,flag:'promo',promo:x}));
+  }else out.push({f:f,t:t,flag:''});
+}
+// 生成伪合法着法（含易位）。skipCastle=true 时不考虑易位（AI 搜索里用简化局面）
+function chGen(bd,col,ep,castling,skipCastle){
+  const out=[];
+  for(let i=0;i<64;i++){
+    const p=bd[i];
+    if(!p||chColor(p)!==col)continue;
+    const t=p.toLowerCase(),r=(i/8)|0,c=i%8;
+    if(t==='p'){
+      const dir=col==='w'?-1:1;
+      const one=i+dir*8;
+      if(one>=0&&one<64&&!bd[one]){
+        chPawnMove(out,i,one,col);
+        const two=i+dir*16;
+        if(((col==='w'&&r===6)||(col==='b'&&r===1))&&!bd[two])out.push({f:i,t:two,flag:'double'});
+      }
+      for(const dc of[-1,1]){
+        const nr=r+dir,nc=c+dc;
+        if(nr<0||nr>7||nc<0||nc>7)continue;
+        const j=nr*8+nc;
+        if(bd[j]&&chColor(bd[j])!==col)chPawnMove(out,i,j,col);
+        else if(!bd[j]&&j===ep)out.push({f:i,t:j,flag:'ep'});
+      }
+    }else if(t==='n'||t==='k'){
+      for(const d of (t==='n'?CH_DIR.n:CH_DIR.k)){
+        const nr=r+d[0],nc=c+d[1];
+        if(nr<0||nr>7||nc<0||nc>7)continue;
+        const j=nr*8+nc;
+        if(!bd[j]||chColor(bd[j])!==col)out.push({f:i,t:j,flag:''});
+      }
+      if(t==='k'&&!skipCastle&&castling){
+        const home=col==='w'?60:4,opp=col==='w'?'b':'w';
+        if(i===home&&!chAttacked(bd,home,opp)){
+          if((col==='w'?castling.wk:castling.bk)&&!bd[home+1]&&!bd[home+2]&&
+             !chAttacked(bd,home+1,opp)&&!chAttacked(bd,home+2,opp))out.push({f:i,t:home+2,flag:'castle-k'});
+          if((col==='w'?castling.wq:castling.bq)&&!bd[home-1]&&!bd[home-2]&&!bd[home-3]&&
+             !chAttacked(bd,home-1,opp)&&!chAttacked(bd,home-2,opp))out.push({f:i,t:home-2,flag:'castle-q'});
+        }
+      }
+    }else{
+      const dirs=t==='q'?CH_DIR.r.concat(CH_DIR.b):CH_DIR[t];   // 后 = 车 + 象
+      for(const d of dirs){
+        let nr=r+d[0],nc=c+d[1];
+        while(nr>=0&&nr<8&&nc>=0&&nc<8){
+          const j=nr*8+nc;
+          if(!bd[j])out.push({f:i,t:j,flag:''});
+          else{
+            if(chColor(bd[j])!==col)out.push({f:i,t:j,flag:''});
+            break;
+          }
+          nr+=d[0];nc+=d[1];
+        }
+      }
+    }
+  }
+  return out;
+}
+function chMake(bd,mv){   // 返回走完后的新棋盘（不改原数组）
+  const nb=bd.slice(),p=nb[mv.f];
+  nb[mv.f]='';
+  nb[mv.t]=mv.flag==='promo'?(chColor(p)==='w'?mv.promo.toUpperCase():mv.promo):p;
+  if(mv.flag==='ep')nb[mv.t+(chColor(p)==='w'?8:-8)]='';
+  if(mv.flag==='castle-k'){nb[mv.t-1]=nb[mv.t+1];nb[mv.t+1]=''}
+  if(mv.flag==='castle-q'){nb[mv.t+1]=nb[mv.t-2];nb[mv.t-2]=''}
+  return nb;
+}
+// 走过一步之后的新局面上下文（吃过路兵目标格 + 易位权）。chApply 与 perft 测试共用同一份逻辑
+function chNextCtx(ctx,bd,mv){
+  const cs=Object.assign({},ctx.castling);
+  const p=bd[mv.f],col=chColor(p),t=p.toLowerCase();
+  if(t==='k'){if(col==='w'){cs.wk=false;cs.wq=false}else{cs.bk=false;cs.bq=false}}
+  if(mv.f===63||mv.t===63)cs.wk=false;
+  if(mv.f===56||mv.t===56)cs.wq=false;
+  if(mv.f===7||mv.t===7)cs.bk=false;
+  if(mv.f===0||mv.t===0)cs.bq=false;
+  return {ep:mv.flag==='double'?(mv.f+mv.t)/2:-1,castling:cs};
+}
+function chLegal(bd,col,ctx){   // 真合法着法：伪合法 + 排除走完自己被将军的
+  const opp=col==='w'?'b':'w',out=[];
+  const gen=chGen(bd,col,ctx?ctx.ep:-1,ctx?ctx.castling:null,!ctx);
+  for(const mv of gen){
+    const nb=chMake(bd,mv);
+    const k=chKingSq(nb,col);
+    if(k<0||!chAttacked(nb,k,opp))out.push(mv);
+  }
+  return out;
+}
+function chEval(bd){   // 白方视角：子力 + 中心/推进小加成
+  let s=0;
+  for(let i=0;i<64;i++){
+    const p=bd[i];
+    if(!p)continue;
+    const c=chColor(p),t=p.toLowerCase();
+    const r=(i/8)|0,cc=i%8;
+    const cen=(3.5-Math.abs(r-3.5))+(3.5-Math.abs(cc-3.5));
+    let bonus=0;
+    if(t==='n'||t==='b')bonus=cen*3;
+    else if(t==='p')bonus=(c==='w'?6-r:r-1)*4+cen;
+    s+=(c==='w'?1:-1)*(CH_VAL[t]+bonus);
+  }
+  return s;
+}
+function chMoveScore(bd,mv){
+  const cap=bd[mv.t]?CH_VAL[bd[mv.t].toLowerCase()]:0;
+  const own=CH_VAL[(bd[mv.f]||'p').toLowerCase()]||0;
+  return cap*10-own/10+(mv.flag==='promo'?800:0);
+}
+function chOrder(bd,mvs){return mvs.slice().sort((a,b)=>chMoveScore(bd,b)-chMoveScore(bd,a))}
+function chNegamax(bd,col,depth,alpha,beta,t0,budget){
+  if(depth<=0)return (col==='w'?1:-1)*chEval(bd);   // 叶子先返回，省掉一次 chLegal（搜索快一倍）
+  const mvs=chOrder(bd,chLegal(bd,col));
+  if(!mvs.length){
+    const inChk=chAttacked(bd,chKingSq(bd,col),col==='w'?'b':'w');
+    return inChk?-100000-depth:-50;     // 被将死给极低分（越晚被将死越好）
+  }
+  let best=-1e9;
+  for(const mv of mvs){
+    const sb=-chNegamax(chMake(bd,mv),col==='w'?'b':'w',depth-1,-beta,-alpha,t0,budget);
+    if(sb>best)best=sb;
+    if(best>alpha)alpha=best;
+    if(alpha>=beta)break;
+    if(Date.now()-t0>budget)break;
+  }
+  return best;
+}
+function chSearch(st,bd,col,maxD,budget){
+  const t0=Date.now();
+  const root=chOrder(bd,chLegal(bd,col,st));
+  if(!root.length)return null;
+  let best=null;
+  for(let d=1;d<=maxD;d++){
+    let bestLocal=null,bs=-1e9,complete=true;
+    for(const mv of root){
+      if(Date.now()-t0>budget){complete=false;break}
+      const sc=-chNegamax(chMake(bd,mv),col==='w'?'b':'w',d-1,-1e9,1e9,t0,budget);
+      if(sc>bs||(sc===bs&&Math.random()<.3)){bs=sc;bestLocal=mv}
+    }
+    if(complete&&bestLocal)best=bestLocal;
+    if(!complete)break;
+  }
+  return best;
+}
+// —— 界面 ——
+function chInit(){
+  if(CH)return;
+  CH={board:[],turn:'w',castling:{},ep:-1,sel:-1,moves:[],hist:[],over:false,thinking:false,flipped:false};
+  const b=document.getElementById('chBoard');
+  for(let i=0;i<64;i++){
+    const d=document.createElement('button');
+    d.className='ch-sq';
+    d.addEventListener('click',()=>chClick(i));
+    b.appendChild(d);
+  }
+  chNew();
+}
+function chNew(){
+  if(!CH)return;
+  CH.board=('rnbqkbnr'+'pppppppp'+' '.repeat(32)+'PPPPPPPP'+'RNBQKBNR').split('').map(x=>x===' '?'':x);
+  CH.turn='w';CH.castling={wk:true,wq:true,bk:true,bq:true};CH.ep=-1;
+  CH.sel=-1;CH.moves=[];CH.hist=[];CH.over=false;CH.thinking=false;
+  document.getElementById('chPromo').classList.remove('show');
+  chStatus('你的回合（白方）');
+  chDraw();
+}
+function chStatus(t){document.getElementById('chStatus').textContent=t}
+function chDraw(){
+  const cells=document.getElementById('chBoard').children;
+  for(let i=0;i<64;i++){
+    const d=cells[i],p=CH.board[i];
+    let cls='ch-sq'+((((i/8)|0)+i%8)%2?' dark':'');
+    if(p)cls+=chColor(p)==='w'?' wp':' bp';
+    if(i===CH.sel)cls+=' sel';
+    const hint=CH.moves.filter(m=>m.t===i)[0];
+    if(hint)cls+=(CH.board[i]||hint.flag==='ep')?' cap':' hint';
+    d.className=cls;
+    d.textContent=p?CH_GLYPH[p.toLowerCase()]:'';
+  }
+}
+function chApply(mv){
+  CH.hist.push({board:CH.board.slice(),turn:CH.turn,castling:Object.assign({},CH.castling),ep:CH.ep});
+  const next=chNextCtx({castling:CH.castling,ep:CH.ep},CH.board,mv);
+  CH.board=chMake(CH.board,mv);
+  CH.castling=next.castling;CH.ep=next.ep;
+  CH.turn=CH.turn==='w'?'b':'w';
+}
+function chClick(i){
+  if(CH.over||CH.thinking||CH.turn!=='w')return;
+  const mv=CH.moves.filter(m=>m.t===i)[0];
+  if(mv){
+    if(mv.flag==='promo'){chAskPromo(mv);return}
+    chApply(mv);CH.sel=-1;CH.moves=[];
+    chAfter();
+    return;
+  }
+  const p=CH.board[i];
+  if(p&&chColor(p)==='w'){
+    CH.sel=i;
+    CH.moves=chLegal(CH.board,'w',CH).filter(m=>m.f===i);
+    chDraw();
+  }else{CH.sel=-1;CH.moves=[];chDraw()}
+}
+function chAskPromo(mv){
+  const box=document.getElementById('chPromo');
+  box.innerHTML='<span>升变成：</span>';
+  ['q','r','b','n'].forEach(x=>{
+    const b=document.createElement('button');
+    b.className='game-btn';
+    b.textContent=CH_GLYPH[x]+' '+({q:'后',r:'车',b:'象',n:'马'})[x];
+    b.addEventListener('click',()=>{
+      box.classList.remove('show');
+      chApply({f:mv.f,t:mv.t,flag:'promo',promo:x});
+      CH.sel=-1;CH.moves=[];
+      chAfter();
+    });
+    box.appendChild(b);
+  });
+  box.classList.add('show');
+}
+function chAfter(){
+  chDraw();
+  const mvs=chLegal(CH.board,CH.turn,CH);
+  const inChk=chAttacked(CH.board,chKingSq(CH.board,CH.turn),CH.turn==='w'?'b':'w');
+  if(!mvs.length){
+    CH.over=true;
+    chStatus(inChk?(CH.turn==='w'?'将死，电脑赢了 🤖':'将死，你赢了 🎉'):'逼和，平局');
+    return;
+  }
+  if(inChk)chStatus((CH.turn==='w'?'你':'电脑')+'被将军！');
+  else chStatus(CH.turn==='w'?'你的回合':'电脑思考中…');
+  if(CH.turn==='b')chAi();
+}
+function chAi(){
+  if(CH.over||CH.thinking)return;
+  CH.thinking=true;
+  setTimeout(()=>{
+    let mv=null;
+    try{mv=chSearch(CH,CH.board.slice(),'b',4,1200)}catch(_){mv=null}
+    CH.thinking=false;
+    if(mv)chApply(mv);
+    if(mv)chAfter();else{chStatus('电脑没招了');CH.over=true;chDraw()}
+  },120);
+}
+function chUndo(){
+  if(!CH||CH.thinking||CH.hist.length<2)return;
+  CH.hist.pop();
+  const s=CH.hist.pop();
+  CH.board=s.board.slice();CH.turn=s.turn;
+  CH.castling=Object.assign({},s.castling);CH.ep=s.ep;
+  CH.sel=-1;CH.moves=[];CH.over=false;
+  document.getElementById('chPromo').classList.remove('show');
+  chStatus('悔了一步，你的回合');
+  chDraw();
+}
+function chFlip(){
+  if(!CH)return;
+  CH.flipped=!CH.flipped;
+  document.getElementById('chBoard').classList.toggle('flip',CH.flipped);
+}
+
+
 // 游戏键盘控制：只在游戏页生效；输入框聚焦 / 搜索框打开时让位，不抢按键
+// （国际象棋靠点击操作，不吃键盘，这里只管贪吃蛇和 2048）
 document.addEventListener('keydown',e=>{
   const pg=document.getElementById('page-games');
   if(!pg||!pg.classList.contains('active'))return;

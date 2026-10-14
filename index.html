@@ -237,7 +237,8 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 /* ══ SIDEBAR FOOT (search + theme) ══ */
 /* overscroll-behavior:contain —— 抽屉里滑到头不要让滚动「接力」给后面的页面，
    页面一被带着滚，手机浏览器就会收起工具栏、改变视口高度，抽屉高度立刻过期露空白 */
-.sidebar nav{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sidebar nav{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
+.nav-bottom{margin-top:auto;border-top:1px solid var(--border)}
 .sidebar-foot{margin-top:auto;padding:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
 .side-act:hover{color:var(--accent);border-color:var(--accent)}
@@ -387,6 +388,7 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .game-btn:hover{border-color:var(--accent);color:var(--accent)}
 .game-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .game-btn.primary:hover{color:var(--on-accent);opacity:.9}
+.game-btn.ch-side.sel{border-color:var(--accent);color:var(--accent)}
 .game-hint{font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.75}
 #snakeCv{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;touch-action:none;display:block}
 .g2-board{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px;padding:8px;touch-action:none;user-select:none;position:relative}
@@ -417,10 +419,11 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .mem-b{background:var(--accent-light);transform:rotateY(180deg);font-size:26px}
 .mem-c.done{cursor:default}
 .mem-c.done .mem-b{border-color:var(--accent);opacity:.7}
-.ch-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;max-width:320px;aspect-ratio:1;border:1px solid var(--border);border-radius:10px;overflow:hidden;user-select:none;touch-action:manipulation}
+#gp-ch .game-card{margin-left:auto;margin-right:auto}
+.ch-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;max-width:min(400px,100%);margin-inline:auto;aspect-ratio:1;border:1px solid var(--border);border-radius:10px;overflow:hidden;user-select:none;touch-action:manipulation}
 .ch-board.flip{transform:rotate(180deg)}
 .ch-board.flip .ch-sq{transform:rotate(180deg)}
-.ch-sq{display:flex;align-items:center;justify-content:center;background:var(--sq-l);border:none;padding:0;cursor:pointer;font-size:26px;line-height:1;position:relative;font-family:var(--font)}
+.ch-sq{display:flex;align-items:center;justify-content:center;background:var(--sq-l);border:none;padding:0;cursor:pointer;font-size:clamp(18px,6.4vw,34px);line-height:1;position:relative;font-family:var(--font)}
 .ch-sq.dark{background:var(--sq-d)}
 .ch-sq.sel{box-shadow:inset 0 0 0 3px var(--accent)}
 .ch-sq.hint::after{content:'';position:absolute;width:28%;height:28%;border-radius:50%;background:rgba(0,0,0,.3)}
@@ -458,9 +461,11 @@ body.dbgon #vhDebug{display:block}
     <a href="#" data-page="gallery" onclick="switchPage('gallery',this)">🖼️ 图库</a>
     <a href="#" data-page="files" onclick="switchPage('files',this)">📎 文件</a>
     <a href="#" data-page="bookmarks" onclick="switchPage('bookmarks',this)">🔗 收藏</a>
-    <a href="#" data-page="guest" onclick="switchPage('guest',this)">💬 留言</a>
     <a href="#" data-page="games" onclick="switchPage('games',this)">🎮 游戏</a>
-    <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
+    <div class="nav-bottom">
+      <a href="#" data-page="guest" onclick="switchPage('guest',this)">💬 留言</a>
+      <a href="#" data-page="about" onclick="switchPage('about',this)">👤 关于</a>
+    </div>
   </nav>
   <div class="sidebar-foot">
     <button class="side-act" onclick="openSearch()">🔍 搜索<kbd>Ctrl K</kbd></button>
@@ -674,13 +679,15 @@ body.dbgon #vhDebug{display:block}
         <div class="game-head">
           <span class="gt">国际象棋</span>
           <span class="game-stat" id="chStatus">你的回合（白方）</span>
+          <button class="game-btn ch-side" id="chSideW" onclick="chNew('w')">执白</button>
+          <button class="game-btn ch-side" id="chSideB" onclick="chNew('b')">执黑</button>
           <button class="game-btn" onclick="chUndo()">悔棋</button>
           <button class="game-btn" onclick="chFlip()">翻转</button>
           <button class="game-btn primary" onclick="chNew()">新局</button>
         </div>
         <div class="ch-board" id="chBoard"></div>
         <div class="ch-promo" id="chPromo"></div>
-        <div class="game-hint">你执白先行，对手是电脑（一步想 1 秒左右）。点自己的棋子选中，圆点是能走的位置，红框是能吃子。规则完整：王车易位、吃过路兵、兵升变（会让你选升什么）。</div>
+        <div class="game-hint">点「执白 / 执黑」选边（白先走，选黑时棋盘自动翻转、电脑先出招）。点自己的棋子选中，圆点是能走的位置，红框是能吃子。规则完整：王车易位、吃过路兵、兵升变（会让你选升什么）。</div>
       </div>
     </div>
   </div>
@@ -2244,7 +2251,7 @@ function chSearch(st,bd,col,maxD,budget){
 // —— 界面 ——
 function chInit(){
   if(CH)return;
-  CH={board:[],turn:'w',castling:{},ep:-1,sel:-1,moves:[],hist:[],over:false,thinking:false,flipped:false};
+  CH={board:[],turn:'w',castling:{},ep:-1,sel:-1,moves:[],hist:[],over:false,thinking:false,flipped:false,playerCol:'w'};
   const b=document.getElementById('chBoard');
   for(let i=0;i<64;i++){
     const d=document.createElement('button');
@@ -2254,13 +2261,20 @@ function chInit(){
   }
   chNew();
 }
-function chNew(){
+function chNew(col){
   if(!CH)return;
+  if(col)CH.playerCol=col;
   CH.board=('rnbqkbnr'+'pppppppp'+' '.repeat(32)+'PPPPPPPP'+'RNBQKBNR').split('').map(x=>x===' '?'':x);
   CH.turn='w';CH.castling={wk:true,wq:true,bk:true,bq:true};CH.ep=-1;
   CH.sel=-1;CH.moves=[];CH.hist=[];CH.over=false;CH.thinking=false;
+  CH.gid=(CH.gid||0)+1;   // 局号：作废旧局排定的 AI 定时器
+  CH.flipped=CH.playerCol==='b';
+  document.getElementById('chBoard').classList.toggle('flip',CH.flipped);
   document.getElementById('chPromo').classList.remove('show');
-  chStatus('你的回合（白方）');
+  document.getElementById('chSideW').classList.toggle('sel',CH.playerCol==='w');
+  document.getElementById('chSideB').classList.toggle('sel',CH.playerCol==='b');
+  if(CH.turn===CH.playerCol)chStatus('你的回合（'+(CH.playerCol==='w'?'白':'黑')+'方）');
+  else chAfter();
   chDraw();
 }
 function chStatus(t){document.getElementById('chStatus').textContent=t}
@@ -2285,7 +2299,7 @@ function chApply(mv){
   CH.turn=CH.turn==='w'?'b':'w';
 }
 function chClick(i){
-  if(CH.over||CH.thinking||CH.turn!=='w')return;
+  if(CH.over||CH.thinking||CH.turn!==CH.playerCol)return;
   const mv=CH.moves.filter(m=>m.t===i)[0];
   if(mv){
     if(mv.flag==='promo'){chAskPromo(mv);return}
@@ -2294,9 +2308,9 @@ function chClick(i){
     return;
   }
   const p=CH.board[i];
-  if(p&&chColor(p)==='w'){
+  if(p&&chColor(p)===CH.playerCol){
     CH.sel=i;
-    CH.moves=chLegal(CH.board,'w',CH).filter(m=>m.f===i);
+    CH.moves=chLegal(CH.board,CH.playerCol,CH).filter(m=>m.f===i);
     chDraw();
   }else{CH.sel=-1;CH.moves=[];chDraw()}
 }
@@ -2319,32 +2333,36 @@ function chAskPromo(mv){
 }
 function chAfter(){
   chDraw();
+  const mine=CH.turn===CH.playerCol;
   const mvs=chLegal(CH.board,CH.turn,CH);
   const inChk=chAttacked(CH.board,chKingSq(CH.board,CH.turn),CH.turn==='w'?'b':'w');
   if(!mvs.length){
     CH.over=true;
-    chStatus(inChk?(CH.turn==='w'?'将死，电脑赢了 🤖':'将死，你赢了 🎉'):'逼和，平局');
+    chStatus(inChk?(mine?'将死，电脑赢了 🤖':'将死，你赢了 🎉'):'逼和，平局');
     return;
   }
-  if(inChk)chStatus((CH.turn==='w'?'你':'电脑')+'被将军！');
-  else chStatus(CH.turn==='w'?'你的回合':'电脑思考中…');
-  if(CH.turn==='b')chAi();
+  if(inChk)chStatus(mine?'你被将军！':'电脑被将军！');
+  else chStatus(mine?'你的回合':'电脑思考中…');
+  if(!mine)chAi();
 }
 function chAi(){
   if(CH.over||CH.thinking)return;
   CH.thinking=true;
+  const aiCol=CH.playerCol==='w'?'b':'w',g=CH.gid;
   setTimeout(()=>{
+    if(g!==CH.gid)return;   // 局已重开，这步作废
     let mv=null;
-    try{mv=chSearch(CH,CH.board.slice(),'b',4,1200)}catch(_){mv=null}
+    try{mv=chSearch(CH,CH.board.slice(),aiCol,4,1200)}catch(_){mv=null}
     CH.thinking=false;
     if(mv)chApply(mv);
     if(mv)chAfter();else{chStatus('电脑没招了');CH.over=true;chDraw()}
   },120);
 }
 function chUndo(){
-  if(!CH||CH.thinking||CH.hist.length<2)return;
-  CH.hist.pop();
-  const s=CH.hist.pop();
+  if(!CH||CH.thinking||CH.turn!==CH.playerCol||!CH.hist.length)return;
+  let s=null;
+  while(CH.hist.length){const x=CH.hist.pop();if(x.turn===CH.playerCol){s=x;break}}
+  if(!s){chNew();return}
   CH.board=s.board.slice();CH.turn=s.turn;
   CH.castling=Object.assign({},s.castling);CH.ep=s.ep;
   CH.sel=-1;CH.moves=[];CH.over=false;

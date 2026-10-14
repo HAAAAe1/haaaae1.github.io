@@ -650,12 +650,22 @@ let pendingImages=[],pendingFiles=[];
 let editingIssueNum=null;
 
 // ── AUTH ──
+// token 前缀能认出类型：github_pat_=fine-grained，ghp_=classic PAT，gho_=OAuth（gh CLI 那种）
+function tokenKind(t){
+  if(!t)return null;
+  if(t.indexOf('github_pat_')===0)return{k:'fine-grained',tip:'建议再核对三件事：只授权本仓库、只给 Contents 读写权限、设了到期时间。'};
+  if(t.indexOf('ghp_')===0)return{k:'classic PAT',tip:'classic token 权限范围大，建议换成 fine-grained：GitHub → Settings → Developer settings → Fine-grained tokens，只授权本仓库、只给 Contents 读写、设到期时间。'};
+  if(t.indexOf('gho_')===0)return{k:'OAuth token',tip:'这是 gh CLI 授权产生的 token，权限是整个账号的仓库，不适合存在网页里，建议换 fine-grained。'};
+  return{k:'未知类型',tip:'没认出前缀，建议到 GitHub → Settings → Developer settings 里用 Fine-grained tokens 重新生成一个。'};
+}
 function updateAuthUI(){
   const s=document.getElementById('authStatus');
   const lo=document.getElementById('logoutBtn');
   const comp=document.getElementById('composer');
   if(token){
-    s.textContent='✓ 已登录';s.className='auth-status ok';
+    const k=tokenKind(token);
+    s.textContent='✓ 已登录（'+(k?k.k:'')+'）';s.className='auth-status ok';
+    s.title=k?k.tip:'';
     lo.style.display='inline-block';
     comp.classList.add('show');
     document.getElementById('tokenInput').style.display='none';

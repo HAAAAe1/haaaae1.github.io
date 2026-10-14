@@ -238,8 +238,8 @@ body.rail-open .rail-bg{opacity:1;pointer-events:auto}
 /* overscroll-behavior:contain —— 抽屉里滑到头不要让滚动「接力」给后面的页面，
    页面一被带着滚，手机浏览器就会收起工具栏、改变视口高度，抽屉高度立刻过期露空白 */
 .sidebar nav{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
-.nav-bottom{margin-top:auto;border-top:1px solid var(--border)}
-.sidebar-foot{margin-top:auto;padding:16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.nav-bottom{margin-top:2px}
+.sidebar-foot{margin-top:auto;padding:20px 16px 10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
 .side-act{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;text-align:left;transition:all .2s}
 .side-act:hover{color:var(--accent);border-color:var(--accent)}
 .side-act kbd{margin-left:auto;font-family:var(--font);font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text3);border:1px solid var(--border)}
@@ -379,19 +379,20 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .game-chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .game-pane{display:none}
 .game-pane.on{display:block}
-.game-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;max-width:400px}
+.game-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;max-width:560px;margin-inline:auto}
 .game-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .game-head .gt{font-size:14px;font-weight:700;margin-right:auto}
 .game-stat{font-size:12px;color:var(--text3)}
 .game-stat b{color:var(--text);font-size:13px}
+#chStatus{min-width:6.5em;white-space:nowrap;text-align:right}
 .game-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-family:var(--font);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s}
 .game-btn:hover{border-color:var(--accent);color:var(--accent)}
 .game-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .game-btn.primary:hover{color:var(--on-accent);opacity:.9}
 .game-btn.ch-side.sel{border-color:var(--accent);color:var(--accent)}
 .game-hint{font-size:11.5px;color:var(--text3);margin-top:10px;line-height:1.75}
-#snakeCv{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;touch-action:none;display:block}
-.g2-board{width:100%;max-width:320px;aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px;padding:8px;touch-action:none;user-select:none;position:relative}
+#snakeCv{width:100%;max-width:min(480px,100%);aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;touch-action:none;display:block;margin-inline:auto}
+.g2-board{width:100%;max-width:min(480px,100%);aspect-ratio:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px;padding:8px;touch-action:none;user-select:none;position:relative;margin-inline:auto}
 .g2-cell{display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--bg3);font-weight:700;font-size:24px;font-family:var(--font);color:var(--text)}
 .g2-cell.t2{background:#eee4da;color:#776e65}.g2-cell.t4{background:#ede0c8;color:#776e65}
 .g2-cell.t8{background:#f2b179;color:#f9f6f2}.g2-cell.t16{background:#f59563;color:#f9f6f2}
@@ -402,7 +403,7 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .g2-msg{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--dim);border-radius:10px;z-index:2}
 .g2-msg.show{display:flex}
 .g2-msg span{color:#fff;font-weight:700;font-size:16px}
-.mine-board{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:100%;max-width:320px;user-select:none;touch-action:manipulation}
+.mine-board{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:100%;max-width:min(480px,100%);margin-inline:auto;user-select:none;touch-action:manipulation}
 .mine-c{aspect-ratio:1;min-width:0;border-radius:4px;border:1px solid var(--border);background:var(--bg3);font-family:var(--font);font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1}
 .mine-c:hover{border-color:var(--accent)}
 .mine-c.open{background:var(--bg2);border-color:transparent;cursor:default}
@@ -410,7 +411,7 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .mine-c[data-n="1"]{color:#4d6bfe}.mine-c[data-n="2"]{color:#16a34a}.mine-c[data-n="3"]{color:#dc2626}
 .mine-c[data-n="4"]{color:#7c3aed}.mine-c[data-n="5"]{color:#b45309}.mine-c[data-n="6"]{color:#0e7490}
 .mine-c[data-n="7"]{color:#334155}.mine-c[data-n="8"]{color:#6b7280}
-.mem-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px;user-select:none}
+.mem-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:min(480px,100%);margin-inline:auto;user-select:none}
 .mem-c{aspect-ratio:1;position:relative;cursor:pointer;perspective:500px;background:none;border:none;padding:0}
 .mem-inner{position:absolute;inset:0;transition:transform .35s;transform-style:preserve-3d}
 .mem-c.open .mem-inner,.mem-c.done .mem-inner{transform:rotateY(180deg)}
@@ -419,8 +420,7 @@ body.sb-open .to-top,body.rail-open .to-top{opacity:0;visibility:hidden;transfor
 .mem-b{background:var(--accent-light);transform:rotateY(180deg);font-size:26px}
 .mem-c.done{cursor:default}
 .mem-c.done .mem-b{border-color:var(--accent);opacity:.7}
-#gp-ch .game-card{margin-left:auto;margin-right:auto}
-.ch-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;max-width:min(400px,100%);margin-inline:auto;aspect-ratio:1;border:1px solid var(--border);border-radius:10px;overflow:hidden;user-select:none;touch-action:manipulation}
+.ch-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;max-width:min(480px,100%);margin-inline:auto;aspect-ratio:1;border:1px solid var(--border);border-radius:10px;overflow:hidden;user-select:none;touch-action:manipulation}
 .ch-board.flip{transform:rotate(180deg)}
 .ch-board.flip .ch-sq{transform:rotate(180deg)}
 .ch-sq{display:flex;align-items:center;justify-content:center;background:var(--sq-l);border:none;padding:0;cursor:pointer;font-size:clamp(18px,6.4vw,34px);line-height:1;position:relative;font-family:var(--font)}
@@ -678,7 +678,7 @@ body.dbgon #vhDebug{display:block}
       <div class="game-card">
         <div class="game-head">
           <span class="gt">国际象棋</span>
-          <span class="game-stat" id="chStatus">你的回合（白方）</span>
+          <span class="game-stat" id="chStatus">你的回合</span>
           <button class="game-btn ch-side" id="chSideW" onclick="chNew('w')">执白</button>
           <button class="game-btn ch-side" id="chSideB" onclick="chNew('b')">执黑</button>
           <button class="game-btn" onclick="chUndo()">悔棋</button>
@@ -1690,6 +1690,9 @@ function snakeInit(){
   if(SK)return;
   SK={run:false,paused:false,dead:false,timer:0,dir:{x:1,y:0},next:null,snake:[],food:null,score:0,speed:150};
   const cv=document.getElementById('snakeCv');
+  // 内部分辨率跟随实际显示尺寸，避免 CSS 拉伸发糊（格子数不变，只调格宽）
+  const disp=Math.max(240,Math.min(480,cv.clientWidth||320));
+  SN.cs=Math.max(2,Math.round(disp/SN.g));
   cv.width=SN.g*SN.cs;cv.height=SN.g*SN.cs;
   let tx=0,ty=0,lastTap=0;
   cv.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
@@ -2273,7 +2276,7 @@ function chNew(col){
   document.getElementById('chPromo').classList.remove('show');
   document.getElementById('chSideW').classList.toggle('sel',CH.playerCol==='w');
   document.getElementById('chSideB').classList.toggle('sel',CH.playerCol==='b');
-  if(CH.turn===CH.playerCol)chStatus('你的回合（'+(CH.playerCol==='w'?'白':'黑')+'方）');
+  if(CH.turn===CH.playerCol)chStatus('你的回合');
   else chAfter();
   chDraw();
 }
@@ -2338,11 +2341,11 @@ function chAfter(){
   const inChk=chAttacked(CH.board,chKingSq(CH.board,CH.turn),CH.turn==='w'?'b':'w');
   if(!mvs.length){
     CH.over=true;
-    chStatus(inChk?(mine?'将死，电脑赢了 🤖':'将死，你赢了 🎉'):'逼和，平局');
+    chStatus(inChk?(mine?'你输了 🤖':'你赢了 🎉'):'逼和平局');
     return;
   }
-  if(inChk)chStatus(mine?'你被将军！':'电脑被将军！');
-  else chStatus(mine?'你的回合':'电脑思考中…');
+  if(inChk)chStatus(mine?'你被将军!':'电脑将军!');
+  else chStatus(mine?'你的回合':'电脑思考…');
   if(!mine)chAi();
 }
 function chAi(){
@@ -2355,7 +2358,7 @@ function chAi(){
     try{mv=chSearch(CH,CH.board.slice(),aiCol,4,1200)}catch(_){mv=null}
     CH.thinking=false;
     if(mv)chApply(mv);
-    if(mv)chAfter();else{chStatus('电脑没招了');CH.over=true;chDraw()}
+    if(mv)chAfter();else{chStatus('电脑无招');CH.over=true;chDraw()}
   },120);
 }
 function chUndo(){
@@ -2367,7 +2370,7 @@ function chUndo(){
   CH.castling=Object.assign({},s.castling);CH.ep=s.ep;
   CH.sel=-1;CH.moves=[];CH.over=false;
   document.getElementById('chPromo').classList.remove('show');
-  chStatus('悔了一步，你的回合');
+  chStatus('已悔棋');
   chDraw();
 }
 function chFlip(){
